@@ -16,13 +16,10 @@ def creating_account(context):
     context.driver = webdriver.Chrome(chrome_options=option)
     context.driver.implicitly_wait(15)
     context.driver.get("http://127.0.0.1:5000/auth/register")
-    #this part is make sure if run the test separately
-    #which may not use the account created in register-login test
-    #we can have another valid account for testing
     field = context.driver.find_element(By.NAME, "username")
-    field.send_keys(date_time)
+    field.send_keys(date_time+"loginT")
     field = context.driver.find_element(By.NAME, "email")
-    field.send_keys(date_time+"testing@gmail.com")
+    field.send_keys(date_time+"loginT@gmail.com")
     field = context.driver.find_element(By.NAME, "password")
     field.send_keys(date_time)
     field = context.driver.find_element(By.NAME, "password2")
@@ -38,7 +35,7 @@ def creating_account(context):
 @when(u'I attempt to fill in the login info')
 def step_impl(context):
     name_field = context.driver.find_element(By.NAME, "username")
-    name_field.send_keys(date_time)
+    name_field.send_keys(date_time+"loginT")
     field = context.driver.find_element(By.NAME, "password")
     field.send_keys(date_time)
 
@@ -52,7 +49,7 @@ def step_impl(context):
 def step_impl(context):
     time.sleep(1)
     dump_text = context.driver.page_source
-    assert ("Hi, "+date_time+"!" in dump_text) is True
+    assert ("Hi, "+date_time+"loginT!" in dump_text) is True
 
 @then(u'I will view my home page')
 def step_impl(context):
