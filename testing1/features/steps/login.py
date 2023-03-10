@@ -9,49 +9,53 @@ from datetime import datetime
 now = datetime.now() # current date and time
 date_time = now.strftime("%m/%d/%Y%H%M%S")
 
-@given(u'I am a new user')
-def open_browser(context):
+@given(u'I have registered an account')
+def creating_account(context):
     option = webdriver.ChromeOptions()
     option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
     context.driver = webdriver.Chrome(chrome_options=option)
     context.driver.implicitly_wait(15)
     context.driver.get("http://127.0.0.1:5000/auth/register")
-
-
-@when(u'I fill in a unique {username} in the username field')
-def step_impl(context,username):
+    #this part is make sure if run the test separately
+    #which may not use the account created in register-login test
+    #we can have another valid account for testing
     field = context.driver.find_element(By.NAME, "username")
     field.send_keys(date_time)
-
-
-@when(u'do the same for the {email} field')
-def step_impl(context,email):
     field = context.driver.find_element(By.NAME, "email")
     field.send_keys(date_time+"testing@gmail.com")
+    field = context.driver.find_element(By.NAME, "password")
+    field.send_keys(date_time)
+    field = context.driver.find_element(By.NAME, "password2")
+    field.send_keys(date_time)
+    add_button = context.driver.find_element(By.NAME, "submit")
+    add_button.click()
+    context.driver.implicitly_wait(15)
+    time.sleep(1)
+    context.driver.get("http://127.0.0.1:5000/auth/login")
 
-@when(u'the {password} field')
-def step_impl(context,password):
+
+
+@when(u'I attempt to fill in the login info')
+def step_impl(context):
+    name_field = context.driver.find_element(By.NAME, "username")
+    name_field.send_keys(date_time)
     field = context.driver.find_element(By.NAME, "password")
     field.send_keys(date_time)
 
-
-@when(u'confirm the {password}')
-def step_impl(context,password):
-    field = context.driver.find_element(By.NAME, "password2")
-    field.send_keys(date_time)
-
-
-@when(u'click the register button')
+@when(u'click the login button')
 def step_impl(context):
     add_button = context.driver.find_element(By.NAME, "submit")
     add_button.click()
     context.driver.implicitly_wait(15)
 
-
-@then(u'the account will be registered')
+@then(u'I will log in to my account')
 def step_impl(context):
     time.sleep(1)
     dump_text = context.driver.page_source
-    assert ("Congratulations, you are now a registered user!" in dump_text) is True
+    assert ("Hi, "+date_time+"!" in dump_text) is True
 
-
+@then(u'I will view my home page')
+def step_impl(context):
+    testingURL = context.driver.current_url
+    print(str(testingURL))
+    assert ("index" in str(testingURL)) is True
