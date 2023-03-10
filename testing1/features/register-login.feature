@@ -16,3 +16,10 @@ Feature: As a new user, I want to be able to register for an account so that I c
         And confirm the password
         And click the register button
         Then the account will be registered
+
+    Scenario: Successful login
+        Given I have registered an account
+        When I attempt to fill in the login info
+        And click the login button
+        Then I will log in to my account 
+        And I will view my home page
