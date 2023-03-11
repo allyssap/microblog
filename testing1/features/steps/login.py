@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 
 now = datetime.now() # current date and time
-date_time = now.strftime("%m/%d/%Y%H%M%S")
+date_time = now.strftime("%m%d%Y%H%M%S")
 
 @given(u'I have registered an account')
 def creating_account(context):
