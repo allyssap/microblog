@@ -145,7 +145,7 @@ def upload_pic():
     if form.validate_on_submit():
         _file = form.image.data
         filename = _file.filename
-        filepath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads', filename)
+        filepath = os.path.join(r'/Home/microblog/app/uploads', filename)
         _file.save(filepath)
         current_user.set_upload(filename, filepath)
         flash(_('Profile picture uploaded'))
