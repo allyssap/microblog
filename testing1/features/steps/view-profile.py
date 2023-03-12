@@ -56,5 +56,4 @@ def step_impl(context):
 @then(u'I will view my profile page')
 def step_impl(context):
     testingURL = context.driver.current_url
-    print(str(testingURL))
     assert ("user/"+date_time+"pvT" in str(testingURL)) is True
