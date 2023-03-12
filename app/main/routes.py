@@ -142,15 +142,15 @@ def delete_account():
 @login_required
 def upload_pic():
     form = UploadPic()
-    _file = request.files['file']
     if form.validate_on_submit():
+        _file = request.files['file']
         filename = form.image.data.filename
         filepath = os.path.join(app.root_path, 'uploads', filename)
         _file.save(filepath)
         current_user.set_upload(filename, filepath)
         flash(_('Profile picture uploaded'))
         return redirect(url_for('main.edit_profile'))
-    return render_template('upload_pic.html', title=_('Upload Avatar'), form=form)
+    return render_template('upload_pic.html', title=_('Upload Pic'), form=form)
 
 
 @bp.route('/follow/<username>', methods=['POST'])
