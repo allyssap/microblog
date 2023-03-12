@@ -243,6 +243,9 @@ def load_user(id):
 class Post(SearchableMixin, db.Model):
     __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key=True)
+    product = db.Column(db.String(32))
+    company = db.Column(db.String(32))
+    category = db.Column(db.String(16))
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -250,6 +253,11 @@ class Post(SearchableMixin, db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+    
+    def set_product(self, prod, comp, cat):
+        self.product = prod
+        self.company = comp
+        self.category = cat
 
 
 class Message(db.Model):

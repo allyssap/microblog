@@ -33,6 +33,7 @@ def index():
             language = ''
         post = Post(body=form.post.data, author=current_user,
                     language=language)
+        post.set_product(prod=form.product.data, comp=form.company.data, cat=form.category.data)
         db.session.add(post)
         db.session.commit()
         flash(_('Your post is now live!'))
