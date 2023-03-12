@@ -24,7 +24,7 @@ class EditProfileForm(FlaskForm):
 class ChangePass(FlaskForm):
     current_password = PasswordField(_l('Current Password'), validators=[DataRequired()])
     new_password = PasswordField(_l('New Password'), validators=[DataRequired(),
-             Regexp(regex='[A-Za-z0-9@#$%^&+=]{8,}'), EqualTo('confirm_password',
+             Regexp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'), EqualTo('confirm_password',
              message='Passwords must match')])
     confirm_password = PasswordField(_l('Confirm Password'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
