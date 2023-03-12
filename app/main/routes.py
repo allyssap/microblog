@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
 from app import db
-from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
+from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, ChangePass, \
     MessageForm
 from app.models import User, Post, Message, Notification
 from app.translate import translate
@@ -107,6 +107,17 @@ def edit_profile():
     return render_template('edit_profile.html', title=_('Edit Profile'),
                            form=form)
 
+@bp.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    form = ChangePass()
+    if form.validate_on_submit():
+        current_user.set_password(form.new_password)
+        db.session.commit()
+        flash(_('Your changes have been saved.'))
+        return redirect(url_for('main.edit_profile'))
+    return render_template('change_password.html', title=_('Change Password'),
+                           form=form)
 
 @bp.route('/follow/<username>', methods=['POST'])
 @login_required
