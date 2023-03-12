@@ -1,7 +1,7 @@
 from flask import request
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, TextAreaField
-from wtforms.validators import ValidationError, DataRequired, Length, Regexp, EqualTo
+from wtforms import StringField, SubmitField, PasswordField, TextAreaField, FileField
+from wtforms.validators import ValidationError, DataRequired, Length, Regexp, EqualTo, FileAllowed
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
@@ -9,6 +9,10 @@ class DeleteAccount(FlaskForm):
     password = PasswordField(_l('Current Password'), validators=[DataRequired()])
     submit = SubmitField('Delete')
     back = SubmitField('Nevermind')
+
+class UploadPic(FlaskForm):
+    image = FileField('Image', validators=[DataRequired(), FileAllowed(['jpg', 'jpeg', 'png'])])
+    submit = SubmitField('Upload')
 
 class EditProfileForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])

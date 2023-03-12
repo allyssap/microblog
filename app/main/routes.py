@@ -4,13 +4,13 @@ from flask import render_template, flash, redirect, url_for, request, g, \
 from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
-from app import db
+from app import db, app
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, ChangePass, \
-    MessageForm, DeleteAccount
+    MessageForm, DeleteAccount, UploadPic
 from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
-
+import os
 
 @bp.before_app_request
 def before_request():
@@ -137,6 +137,21 @@ def delete_account():
             flash(_('Delete Aborted.'))
             return redirect(url_for('main.edit_profile'))
     return render_template('delete_account.html', title=_('Delete Account'), form=form)
+
+@bp.route('/upload_pic', methods=['GET', 'POST'])
+@login_required
+def upload_pic():
+    form = UploadPic()
+    _file = request.files['file']
+    if form.validate_on_submit():
+        filename = form.image.data.filename
+        filepath = os.path.join(app.root_path, 'uploads', filename)
+        _file.save(filepath)
+        current_user.set_upload(filename, filepath)
+        flash(_('Profile picture uploaded'))
+        return redirect(url_for('main.edit_profile'))
+    return render_template('upload_pic.html', title=_('Upload Avatar'), form=form)
+
 
 @bp.route('/follow/<username>', methods=['POST'])
 @login_required
