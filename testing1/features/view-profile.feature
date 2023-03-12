@@ -9,3 +9,7 @@ Feature: As a registered user, I want to be able to view my profile information 
         And the page should have a button to modify the profile
         And the page should have a place to show the history posts
 
+    Scenario: View profile page
+        Given I am signing in to a profile
+        When I click the profile button
+        Then I will view my profile page
