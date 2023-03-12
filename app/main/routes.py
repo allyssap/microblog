@@ -6,7 +6,7 @@ from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, ChangePass, \
-    MessageForm
+    MessageForm, DeleteAccount
 from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
@@ -122,6 +122,21 @@ def change_password():
             return redirect(url_for('main.edit_profile'))
     return render_template('change_password.html', title=_('Change Password'),
                            form=form)
+
+@bp.route('/delete_account', methods=['GET', 'POST'])
+@login_required
+def delete_account():
+    form = DeleteAccount()
+    if form.validate_on_submit():
+        if form.submit.data and current_user.check_password(form.password.data):
+            db.session.delete(current_user)
+            db.session.commit()
+            flash(_('Account Deleted.'))
+            return redirect(url_for('auth.login'))
+        elif form.back.data:
+            flash(_('Delete Aborted.'))
+            return redirect(url_for('main.edit_profile'))
+    return render_template('delete_account.html')
 
 @bp.route('/follow/<username>', methods=['POST'])
 @login_required

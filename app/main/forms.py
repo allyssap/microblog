@@ -5,6 +5,10 @@ from wtforms.validators import ValidationError, DataRequired, Length, Regexp, Eq
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
+class DeleteAccount(FlaskForm):
+    password = PasswordField(_l('Current Password'), validators=[DataRequired()])
+    submit = SubmitField('Delete')
+    back = SubmitField('Nevermind')
 
 class EditProfileForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
