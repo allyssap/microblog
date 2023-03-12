@@ -107,15 +107,19 @@ def edit_profile():
     return render_template('edit_profile.html', title=_('Edit Profile'),
                            form=form)
 
-@bp.route('/change_password', methods=['POST'])
+@bp.route('/change_password', methods=['GET', 'POST'])
 @login_required
 def change_password():
     form = ChangePass()
     if form.validate_on_submit():
-        current_user.set_password(form.new_password)
-        db.session.commit()
-        flash(_('Your changes have been saved.'))
-        return redirect(url_for('main.edit_profile'))
+        if current_user.check_password(form.current_password.data):
+            current_user.set_password(form.new_password.data)
+            db.session.commit()
+            flash(_('Your changes have been saved.', 'success'))
+            return redirect(url_for('main.edit_profile'))
+        else:
+            flash(_('Current password incorrect.', 'danger'))
+            return redirect(url_for('main.edit_profile'))
     return render_template('change_password.html', title=_('Change Password'),
                            form=form)
 
