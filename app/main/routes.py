@@ -136,7 +136,7 @@ def delete_account():
         elif form.back.data:
             flash(_('Delete Aborted.'))
             return redirect(url_for('main.edit_profile'))
-    return render_template('delete_account.html')
+    return render_template('delete_account.html', title=_('Delete Account'), form=form)
 
 @bp.route('/follow/<username>', methods=['POST'])
 @login_required
