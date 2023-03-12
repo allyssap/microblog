@@ -115,10 +115,10 @@ def change_password():
         if current_user.check_password(form.current_password.data):
             current_user.set_password(form.new_password.data)
             db.session.commit()
-            flash(_('Your changes have been saved.', 'success'))
+            flash(_('Your changes have been saved.'))
             return redirect(url_for('main.edit_profile'))
         else:
-            flash(_('Current password incorrect.', 'danger'))
+            flash(_('Current password incorrect.'))
             return redirect(url_for('main.edit_profile'))
     return render_template('change_password.html', title=_('Change Password'),
                            form=form)
