@@ -28,8 +28,8 @@ class EmptyForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    product = TextAreaField(_l('Product'), validators=[DataRequired()])
-    company = TextAreaField(_l('Company'), validators=[DataRequired()])
+    product = TextAreaField(_l('Product'), validators=[DataRequired()], render_kw={"rows": 1, "cols": 32})
+    company = TextAreaField(_l('Company'), validators=[DataRequired()], render_kw={"rows": 1, "cols": 32})
     category = SelectField('Category', choices=[('Electronics', 'Electronics'), ('Furniture', 'Furniture'),
                 ('Books', 'Books'), ('Clothes','Clothes'), ('Makeup','Makeup'),
                 ('Toys','Toys'), ('Games','Games'), ('Tools', 'Tools'), ('Other', 'Other')])

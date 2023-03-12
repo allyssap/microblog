@@ -13,7 +13,7 @@
                         </a>
                     </span>
                 {% endset %}
-                {{ _('%(username)s talked about %(company)s's %(product)s %(when)s',
+                {{ _("%(username)s talked about %(company)s's %(product)s %(when)s",
                     username=user_link, company=post.company, product=post.product, when=moment(post.timestamp).fromNow()) }}
                 <br>
                 <span id="post{{ post.id }}">{{ post.body }}</span>
