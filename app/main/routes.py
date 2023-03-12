@@ -143,9 +143,9 @@ def delete_account():
 def upload_pic():
     form = UploadPic()
     if form.validate_on_submit():
-        _file = request.files['file']
-        filename = form.image.data.filename
-        filepath = os.path.join(app.root_path, 'uploads', filename)
+        _file = form.image.data
+        filename = _file.filename
+        filepath = os.path.join(r'C:\Users\juanv\OneDrive\Documents\GitHub\microblog\app\uploads', filename)
         _file.save(filepath)
         current_user.set_upload(filename, filepath)
         flash(_('Profile picture uploaded'))
