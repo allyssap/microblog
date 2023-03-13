@@ -50,7 +50,7 @@ def index():
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
-@bp.route('/edit_post')
+@bp.route('/edit_post/<int:post>', methods=['GET', 'POST'])
 @login_required
 def edit_post(post):
     post_data = db.session.query(Post).get(post)
@@ -64,7 +64,7 @@ def edit_post(post):
     return render_template('edit_post.html', title=_('Edit Post'),
                            form=form)
 
-@bp.route('/delete_post')
+@bp.route('/delete_post<int:post>', methods=['GET', 'POST'])
 @login_required
 def delete_post(post):
     post_data = db.session.query(Post).get(post)
