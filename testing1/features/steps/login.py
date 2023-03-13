@@ -21,9 +21,9 @@ def creating_account(context):
     field = context.driver.find_element(By.NAME, "email")
     field.send_keys(date_time+"loginT@gmail.com")
     field = context.driver.find_element(By.NAME, "password")
-    field.send_keys(date_time)
+    field.send_keys("Tesing1!")
     field = context.driver.find_element(By.NAME, "password2")
-    field.send_keys(date_time)
+    field.send_keys("Tesing1!")
     add_button = context.driver.find_element(By.NAME, "submit")
     add_button.click()
     context.driver.implicitly_wait(15)
@@ -37,7 +37,7 @@ def step_impl(context):
     name_field = context.driver.find_element(By.NAME, "username")
     name_field.send_keys(date_time+"loginT")
     field = context.driver.find_element(By.NAME, "password")
-    field.send_keys(date_time)
+    field.send_keys("Tesing1!")
 
 @when(u'click the login button')
 def step_impl(context):

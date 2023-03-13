@@ -25,9 +25,9 @@ def initialize(context):
     field = context.driver.find_element(By.NAME, "email")
     field.send_keys(date_time+"pUI@gmail.com")
     field = context.driver.find_element(By.NAME, "password")
-    field.send_keys(date_time)
+    field.send_keys("Tesing1!")
     field = context.driver.find_element(By.NAME, "password2")
-    field.send_keys(date_time)
+    field.send_keys("Tesing1!")
     add_button = context.driver.find_element(By.NAME, "submit")
     add_button.click()
     # context.driver.implicitly_wait(15)
@@ -36,7 +36,7 @@ def initialize(context):
     name_field = context.driver.find_element(By.NAME, "username")
     name_field.send_keys(date_time+"pUI")
     field = context.driver.find_element(By.NAME, "password")
-    field.send_keys(date_time)
+    field.send_keys("Tesing1!")
     add_button = context.driver.find_element(By.NAME, "submit")
     add_button.click()
     time.sleep(1)
@@ -69,12 +69,12 @@ def check_login_info(context):
 @then(u'the page should have a text to show the followers number')
 def check_followers(context):
     dump_text = context.driver.page_source
-    assert ("Last seen on" in dump_text) is True
+    assert ("followers" in dump_text) is True
 
 @then(u'the page should have a text to show the followings number')
 def check_followings(context):
     dump_text = context.driver.page_source
-    assert ("Last seen on" in dump_text) is True
+    assert ("following" in dump_text) is True
 
 @then(u'the page should have a button to modify the profile')
 def check_modify_button(context):
