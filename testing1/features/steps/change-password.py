@@ -10,7 +10,7 @@ from datetime import datetime
 now = datetime.now() # current date and time
 date_time = now.strftime("%m%d%Y%H%M%S")
 
-@given(u'I am on profile page')
+@given(u'I am signed in and on my profile page')
 def initialize(context):
     option = webdriver.ChromeOptions()
     option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
@@ -21,9 +21,9 @@ def initialize(context):
     logout_button = context.driver.find_element(By.PARTIAL_LINK_TEXT, "Click to Register!")
     logout_button.click()
     field = context.driver.find_element(By.NAME, "username")
-    field.send_keys(date_time+"changeAm")
+    field.send_keys(date_time+"changePw")
     field = context.driver.find_element(By.NAME, "email")
-    field.send_keys(date_time+"changeAm@gmail.com")
+    field.send_keys(date_time+"changePw@gmail.com")
     field = context.driver.find_element(By.NAME, "password")
     field.send_keys("Testing1!")
     field = context.driver.find_element(By.NAME, "password2")
@@ -34,7 +34,7 @@ def initialize(context):
     time.sleep(1)
     #login
     name_field = context.driver.find_element(By.NAME, "username")
-    name_field.send_keys(date_time+"changeAm")
+    name_field.send_keys(date_time+"changePw")
     field = context.driver.find_element(By.NAME, "password")
     field.send_keys("Testing1!")
     add_button = context.driver.find_element(By.NAME, "submit")
@@ -49,7 +49,7 @@ def initialize(context):
     # context.driver.implicitly_wait(15)
 
 
-@when(u'I click ‘edit profile’')
+@when(u'I click ‘edit my profile’')
 def check_username(context):
     status = context.driver.find_element(By.PARTIAL_LINK_TEXT, "Edit your profile").is_displayed()
     assert status is True
@@ -57,28 +57,47 @@ def check_username(context):
     change_button.click()
     time.sleep(1)
 
-@then(u'change the text in the about me text box')
+@then(u'click ‘change password’')
 def check_login_info(context):
-    status = context.driver.find_element(By.NAME, "about_me").is_displayed()
+    status = context.driver.find_element(By.PARTIAL_LINK_TEXT, "Change Password").is_displayed()
     assert status is True
-    field = context.driver.find_element(By.NAME, "about_me")
-    field.send_keys("test about me")
-
-
-@then(u'click submit')
-def check_followers(context):
-    status = context.driver.find_element(By.NAME, "submit").is_displayed()
-    assert status is True
-    confirm_button = context.driver.find_element(By.NAME, "submit")
-    confirm_button.click()
+    change_button = context.driver.find_element(By.PARTIAL_LINK_TEXT, "Change Password")
+    change_button.click()
     time.sleep(1)
 
-@then(u'my about me will be edited')
+
+@then(u'enter my current password')
+def check_followers(context):
+    status = context.driver.find_element(By.NAME, "current_password").is_displayed()
+    assert status is True
+    pwd = context.driver.find_element(By.NAME, "current_password")
+    pwd.send_keys("Testing1!")
+    status = context.driver.find_element(By.NAME, "new_password").is_displayed()
+    assert status is True
+    pwd = context.driver.find_element(By.NAME, "new_password")
+    pwd.send_keys("Testing2!")
+    status = context.driver.find_element(By.NAME, "confirm_password").is_displayed()
+    assert status is True
+    pwd = context.driver.find_element(By.NAME, "confirm_password")
+    pwd.send_keys("Testing2!")
+    submit_button = context.driver.find_element(By.NAME, "submit")
+    submit_button.click()
+    time.sleep(1)
+   
+
+@then(u'I will be prompted to set my new password')
 def check_followings(context):
     dump_text = context.driver.page_source
     assert ("Your changes have been saved." in dump_text) is True
-    p_button = context.driver.find_element(By.PARTIAL_LINK_TEXT, "Profile")
-    p_button.click()
+    logout_button = context.driver.find_element(By.PARTIAL_LINK_TEXT, "Logout")
+    logout_button.click()
     time.sleep(1)
-    dump_text = context.driver.page_source
-    assert ("test about me" in dump_text) is True
+    name_field = context.driver.find_element(By.NAME, "username")
+    name_field.send_keys(date_time+"changePw")
+    field = context.driver.find_element(By.NAME, "password")
+    field.send_keys("Testing2!")
+    submit_button = context.driver.find_element(By.NAME, "submit")
+    submit_button.click()
+    time.sleep(1)
+    testingURL = context.driver.current_url
+    assert ("index" in str(testingURL)) is True

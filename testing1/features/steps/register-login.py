@@ -32,13 +32,13 @@ def step_impl(context,email):
 @when(u'the {password} field')
 def step_impl(context,password):
     field = context.driver.find_element(By.NAME, "password")
-    field.send_keys("Tesing1!")
+    field.send_keys("Testing1!")
 
 
 @when(u'confirm the {password}')
 def step_impl(context,password):
     field = context.driver.find_element(By.NAME, "password2")
-    field.send_keys("Tesing1!")
+    field.send_keys("Testing1!")
 
 
 @when(u'click the register button')
