@@ -1,15 +1,23 @@
 from flask import request
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField
-from wtforms.validators import ValidationError, DataRequired, Length
+from flask_wtf.file import FileAllowed
+from wtforms import StringField, SubmitField, PasswordField, TextAreaField, FileField
+from wtforms.validators import ValidationError, DataRequired, Length, Regexp, EqualTo
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
+class DeleteAccount(FlaskForm):
+    password = PasswordField(_l('Current Password'), validators=[DataRequired()])
+    submit = SubmitField('Delete')
+    back = SubmitField('Nevermind')
+
+class UploadPic(FlaskForm):
+    image = FileField('Image', validators=[DataRequired(), FileAllowed(['jpg', 'jpeg', 'png'])])
+    submit = SubmitField('Upload')
 
 class EditProfileForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
-    about_me = TextAreaField(_l('About me'),
-                             validators=[Length(min=0, max=140)])
+    about_me = TextAreaField(_l('About me'), validators=[Length(min=0, max=140)])
     submit = SubmitField(_l('Submit'))
 
     def __init__(self, original_username, *args, **kwargs):
@@ -22,6 +30,13 @@ class EditProfileForm(FlaskForm):
             if user is not None:
                 raise ValidationError(_('Please use a different username.'))
 
+class ChangePass(FlaskForm):
+    current_password = PasswordField(_l('Current Password'), validators=[DataRequired()])
+    new_password = PasswordField(_l('New Password'), validators=[DataRequired(),
+             Regexp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'), EqualTo('confirm_password',
+             message='Passwords must match')])
+    confirm_password = PasswordField(_l('Confirm Password'), validators=[DataRequired()])
+    submit = SubmitField(_l('Submit'))
 
 class EmptyForm(FlaskForm):
     submit = SubmitField('Submit')
