@@ -53,14 +53,14 @@ def index():
 @bp.route('/edit_post/<int:post>', methods=['GET', 'POST'])
 @login_required
 def edit_post(post):
-    post_data = db.session.query(Post).filter(Post.id == post).first()
+    post_data = db.session.query(Post).get(post)
     form = EditPost()
     form.edit.data = post_data.body
     if form.validate_on_submit():
         post_data.body = form.edit.data
         db.session.commit()
         flash(_('Your post has been edited.'))
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main._post'))
     return render_template('edit_post.html', title=_('Edit Post'),
                            form=form)
 
