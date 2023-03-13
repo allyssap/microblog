@@ -60,7 +60,7 @@ def edit_post(post):
         post_data.body = form.edit.data
         setattr(post_data, 'body', form.edit.data)
         db.session.commit()
-        flash(_('Your post has been edited.'))
+        flash(_('Your post has been edited. %s'%post_data.body))
         return redirect(url_for('main.index'))
     return render_template('edit_post.html', title=_('Edit Post'),
                            form=form)
