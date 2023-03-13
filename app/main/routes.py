@@ -60,7 +60,7 @@ def edit_post(post):
         post_data.body = form.edit
         db.session.commit()
         flash(_('Your post has been edited.'))
-        return redirect(url_for('_post'))
+        return redirect(url_for('main.index'))
     return render_template('edit_post.html', title=_('Edit Post'),
                            form=form)
 
@@ -71,7 +71,7 @@ def delete_post(post):
     db.session.delete(post_data)
     db.session.commit()
     flash(_('Your post has been deleted.'))
-    return redirect(url_for('_post'))
+    return redirect(url_for('main.index'))
 
 @bp.route('/explore')
 @login_required
