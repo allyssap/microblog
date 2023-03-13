@@ -55,7 +55,7 @@ def index():
 def edit_post(post):
     post_data = db.session.query(Post).filter(Post.id == post).first()
     form = EditPost()
-    form.edit = post_data.body
+    form.edit.data = post_data.body
     if form.validate_on_submit():
         post_data.body = form.edit.data
         db.session.commit()
