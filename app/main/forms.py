@@ -5,6 +5,9 @@ from wtforms.validators import ValidationError, DataRequired, Length
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
+class EditPost(FlaskForm):
+    edit = TextAreaField(_l('Edit'), validators=[DataRequired(), Length(min=1, max=140)])
+    submit = SubmitField(_l('Submit'))
 
 class EditProfileForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])

@@ -6,7 +6,7 @@ from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
-    MessageForm
+    MessageForm, EditPost
 from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
@@ -50,6 +50,28 @@ def index():
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
+@bp.route('/edit_post')
+@login_required
+def edit_post(post):
+    post_data = db.session.query(Post).get(post)
+    form = EditPost()
+    form.edit = post_data.body
+    if form.validate_on_submit():
+        post_data.body = form.edit
+        db.session.commit()
+        flash(_('Your post has been edited.'))
+        return redirect(url_for('_post'))
+    return render_template('edit_post.html', title=_('Edit Post'),
+                           form=form)
+
+@bp.route('/delete_post')
+@login_required
+def delete_post(post):
+    post_data = db.session.query(Post).get(post)
+    db.session.delete(post_data)
+    db.session.commit()
+    flash(_('Your post has been deleted.'))
+    return redirect(url_for('_post'))
 
 @bp.route('/explore')
 @login_required
@@ -107,7 +129,6 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title=_('Edit Profile'),
                            form=form)
-
 
 @bp.route('/follow/<username>', methods=['POST'])
 @login_required

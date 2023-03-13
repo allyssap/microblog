@@ -26,6 +26,12 @@
                                 '{{ post.language }}',
                                 '{{ g.locale }}');">{{ _('Translate') }}</a>
                 </span>
+                <span id="edit{{ post.id }}">
+                    <a href="{{ url_for('main.edit_post', post=post.id) }}">Edit</a>
+                </span>
+                <span id="delete{{ post.id }}">
+                    <a href="{{ url_for('main.delete_post', post=post.id) }}">Delete</a>
+                </span>
                 {% endif %}
             </td>
         </tr>
