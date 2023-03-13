@@ -259,6 +259,9 @@ class Post(SearchableMixin, db.Model):
         self.company = comp
         self.category = cat
 
+    def set_body(self, edit):
+        self.body = edit
+
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -57,8 +57,7 @@ def edit_post(post):
     form = EditPost()
     form.edit.data = post_data.body
     if form.validate_on_submit():
-        post_data.body = form.edit.data
-        setattr(post_data, 'body', form.edit.data)
+        post_data.set_body(form.edit.data)
         db.session.commit()
         flash(_('Your post has been edited. %s'%post_data.body))
         return redirect(url_for('main.index'))
