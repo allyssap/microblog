@@ -6,7 +6,7 @@ from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
 class EditPost(FlaskForm):
-    edit = TextAreaField(_l('Edit'), validators=[DataRequired(), Length(min=1, max=140)])
+    edit = TextAreaField(_l('Edit'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
 
 class EditProfileForm(FlaskForm):
