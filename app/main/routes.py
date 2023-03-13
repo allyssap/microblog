@@ -53,14 +53,14 @@ def index():
 @bp.route('/edit_post/<int:post>', methods=['GET', 'POST'])
 @login_required
 def edit_post(post):
-    post_data = db.session.query(Post).get(post)
+    post_data = db.session.query(Post).filter(Post.id == post).first()
     form = EditPost()
     form.edit = post_data.body
     if form.validate_on_submit():
         post_data.body = form.edit
         db.session.commit()
         flash(_('Your post has been edited.'))
-        return redirect(url_for('main.index'))
+        redirect(request.referrer or '/')
     return render_template('edit_post.html', title=_('Edit Post'),
                            form=form)
 
@@ -71,7 +71,7 @@ def delete_post(post):
     db.session.delete(post_data)
     db.session.commit()
     flash(_('Your post has been deleted.'))
-    return redirect(url_for('main.index'))
+    redirect(request.referrer or '/')
 
 @bp.route('/explore')
 @login_required
