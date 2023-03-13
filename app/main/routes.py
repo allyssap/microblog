@@ -58,9 +58,10 @@ def edit_post(post):
     form.edit.data = post_data.body
     if form.validate_on_submit():
         post_data.body = form.edit.data
+        db.session.merge(post_data)
         db.session.commit()
         flash(_('Your post has been edited.'))
-        return redirect(url_for('main._post'))
+        return redirect(url_for('main.index'))
     return render_template('edit_post.html', title=_('Edit Post'),
                            form=form)
 
