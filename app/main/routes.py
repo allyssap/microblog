@@ -6,7 +6,7 @@ from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
-    MessageForm
+    MessageForm, SecurityForm
 from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
@@ -65,6 +65,18 @@ def explore():
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
+@bp.route('/security_question', methods=['GET', 'POST'])
+@login_required
+def security_question():
+    form = SecurityForm()
+    if form.validate_on_submit():
+        current_user.sec_question = form.question.data
+        current_user.sec_answer = form.answer.data
+        db.session.commit()
+        flash(_('Your security question has been set.'))
+        return redirect(url_for('main.edit_profile'))
+    return render_template('security_question.html', title=_('Set Security Question'),
+                           form=form)
 
 @bp.route('/user/<username>')
 @login_required
