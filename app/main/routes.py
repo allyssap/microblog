@@ -55,12 +55,13 @@ def index():
 def edit_post(post):
     post_data = db.session.query(Post).get(post)
     form = EditPost()
-    #form.edit.data = post_data.body
     if form.validate_on_submit():
         post_data.body = form.edit.data
         db.session.commit()
         flash(_('Your post has been edited.%s'%form.edit.data))
         return redirect(url_for('main.index'))
+    else:
+        form.edit.data = post_data.body
     return render_template('edit_post.html', title=_('Edit Post'),
                            form=form)
 
