@@ -58,11 +58,11 @@ def edit_post(post):
     if form.validate_on_submit():
         post_data.body = form.edit.data
         db.session.commit()
-        flash(_('Your post has been edited.%s'%form.edit.data))
+        flash(_('Your post has been edited.'))
         return redirect(url_for('main.index'))
     else:
         form.edit.data = post_data.body
-    return render_template('edit_post.html', title=_('Edit Post'),
+        return render_template('edit_post.html', title=_('Edit Post'),
                            form=form)
 
 @bp.route('/delete_post<int:post>', methods=['GET', 'POST'])
