@@ -13,6 +13,6 @@
     <p>
         {{ _('Forgot Your Password?') }}
         <a href="{{ url_for('auth.reset_password_request') }}">{{ _('Click to Reset It') }}</a>
-        <a href="{{ url_for('auth.answer_sec') }}">{{ _('Or Answer Your Security Question') }}</a>
+        <a href="{{ url_for('auth.get_user') }}">{{ _('Or Answer Your Security Question') }}</a>
     </p>
 {% endblock %}
