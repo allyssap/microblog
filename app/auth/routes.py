@@ -37,7 +37,7 @@ def answer_sec():
         if form.validate_on_submit():
             if form.answer.data == user.sec_answer:
                 login_user(user)
-                return redirect(url_for('main.login'))
+                return redirect(url_for('main.index'))
             else:
                 flash(_('Invalid answer'))
                 return redirect(url_for('auth.login'))
