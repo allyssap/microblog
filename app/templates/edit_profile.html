@@ -8,9 +8,23 @@
             {{ wtf.quick_form(form) }}
         </div>
     </div>
-    <a href="{{ url_for('main.change_password') }}">Change Password</a>
-    <br>
-    <a href="{{ url_for('main.delete_account') }}">Delete Account</a>
-    <br>
-    <a href="{{ url_for('main.upload_pic') }}">Upload Avatar Picture</a>
+    <h2>{{ _('Change Password') }}</h2>
+    <div class="row">
+    	<div class="col-md-12">
+    		<a href="{{ url_for('main.change_password') }}">Change Password</a>
+    	</div>
+    </div>
+    <h3>{{ _('Delete Account') }}</h3>
+    <div class="row">
+    	<div class="col-md-12">
+    		<a href="{{ url_for('main.delete_account') }}">Delete Account</a>
+    	</div>
+    </div>
+    <h4>{{ _('Change Avatar') }}</h4>
+    <div class="row">
+    	<div class="col-md-12">
+    	 	<p>{{ _('Use Gravatar to manage your profile image that appears on this site and other sites that support Gravatar.') }}</p>
+    		<a href="{{ url_for('main.upload_pic') }}">Upload Avatar Picture</a>
+    	</div>
+    </div>  
 {% endblock %}
