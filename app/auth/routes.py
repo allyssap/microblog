@@ -39,7 +39,7 @@ def answer_sec():
                 login_user(user)
             else:
                 flash(_('Invalid answer'))
-                return redirect(url_for('auth.login'))
+                #return redirect(url_for('auth.login'))
     return render_template('auth/answer_sec.html', title=_('Security Question'), form=form)
 
 @bp.route('/login', methods=['GET', 'POST'])
