@@ -1,10 +1,15 @@
 from flask import request
 from flask_wtf import FlaskForm
+
 from flask_wtf.file import FileAllowed
-from wtforms import StringField, SubmitField, PasswordField, TextAreaField, FileField
+from wtforms import StringField, SubmitField, TextAreaField, SelectField, PasswordFi, FileField
 from wtforms.validators import ValidationError, DataRequired, Length, Regexp, EqualTo
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
+
+class EditPost(FlaskForm):
+    edit = TextAreaField(_l('Edit'), validators=[DataRequired()])
+    submit = SubmitField(_l('Submit'))
 
 class DeleteAccount(FlaskForm):
     password = PasswordField(_l('Current Password'), validators=[DataRequired()])
@@ -13,7 +18,7 @@ class DeleteAccount(FlaskForm):
 
 class UploadPic(FlaskForm):
     image = FileField('Image', validators=[DataRequired(), FileAllowed(['jpg', 'jpeg', 'png'])])
-    submit = SubmitField('Upload')
+    submit = SubmitField('Upload'
 
 class EditProfileForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
@@ -42,6 +47,11 @@ class EmptyForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class PostForm(FlaskForm):
+    product = TextAreaField(_l('Product'), validators=[DataRequired()], render_kw={"rows": 1, "cols": 32})
+    company = TextAreaField(_l('Company'), validators=[DataRequired()], render_kw={"rows": 1, "cols": 32})
+    category = SelectField('Category', choices=[('Electronics', 'Electronics'), ('Furniture', 'Furniture'),
+                ('Books', 'Books'), ('Clothes','Clothes'), ('Makeup','Makeup'),
+                ('Toys','Toys'), ('Games','Games'), ('Tools', 'Tools'), ('Other', 'Other')])
     post = TextAreaField(_l('Say something'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
 

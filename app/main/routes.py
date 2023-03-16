@@ -5,8 +5,9 @@ from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
 from app import db
-from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, ChangePass, \
-    MessageForm, DeleteAccount, UploadPic
+from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
+    MessageForm, EditPost, DeleteAccount, UploadPic, ChangePass
+
 from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
@@ -33,6 +34,7 @@ def index():
             language = ''
         post = Post(body=form.post.data, author=current_user,
                     language=language)
+        post.set_product(prod=form.product.data, comp=form.company.data, cat=form.category.data)
         db.session.add(post)
         db.session.commit()
         flash(_('Your post is now live!'))
@@ -49,6 +51,29 @@ def index():
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
+@bp.route('/edit_post/<int:post>', methods=['GET', 'POST'])
+@login_required
+def edit_post(post):
+    post_data = db.session.query(Post).get(post)
+    form = EditPost()
+    if form.validate_on_submit():
+        post_data.body = form.edit.data
+        db.session.commit()
+        flash(_('Your post has been edited.'))
+        return redirect(url_for('main.index'))
+    else:
+        form.edit.data = post_data.body
+        return render_template('edit_post.html', title=_('Edit Post'),
+                           form=form)
+
+@bp.route('/delete_post<int:post>', methods=['GET', 'POST'])
+@login_required
+def delete_post(post):
+    post_data = db.session.query(Post).get(post)
+    db.session.delete(post_data)
+    db.session.commit()
+    flash(_('Your post has been deleted.'))
+    return redirect(url_for('main.index'))
 
 @bp.route('/explore')
 @login_required
@@ -151,7 +176,6 @@ def upload_pic():
         flash(_('Profile picture uploaded'))
         return redirect(url_for('main.edit_profile'))
     return render_template('upload_pic.html', title=_('Upload Pic'), form=form)
-
 
 @bp.route('/follow/<username>', methods=['POST'])
 @login_required
