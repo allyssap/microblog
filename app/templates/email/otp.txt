@@ -6,7 +6,7 @@ Here is your one time passcode:
 
 Here is one time Link:
 
-{{ url_for('auth.verificationlink', token=token, _external=True) }}
+{{link}}
 
 If you have not requested a otp, simply ignore this message.
 
