@@ -5,9 +5,9 @@ from flask_babel import _
 from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm, \
-    ResetPasswordRequestForm, ResetPasswordForm, QuestionSecurityCheck, AccountSecurityCheck
+    ResetPasswordRequestForm, ResetPasswordForm, QuestionSecurityCheck, AccountSecurityCheck, OTPForm, VerificationForm, OneTimeLinkForm
 from app.models import User
-from app.auth.email import send_password_reset_email
+from app.auth.email import send_password_reset_email, send_otp_email
 
 @bp.route('/get_user', methods=['GET', 'POST'])
 def get_user():
@@ -42,23 +42,80 @@ def answer_sec():
                 flash(_('Invalid answer'))
                 return redirect(url_for('auth.login'))
     return render_template('auth/answer_sec.html', title=_('Security Question'), form=form)
+global_otp = '1234'
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash(_('Invalid username or password'))
             return redirect(url_for('auth.login'))
-        login_user(user, remember=form.remember_me.data)
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('main.index')
+        # next_page = request.args.get('next')
+        global global_otp
+        global_otp = send_otp_email(user)
+        # if not next_page or url_parse(next_page).netloc != '':
+        next_page = url_for('auth.otp_login')
+        flash(_('Check your email for your OTP'))
         return redirect(next_page)
     return render_template('auth/login.html', title=_('Sign In'), form=form)
+
+@bp.route('/otp', methods=['GET', 'POST'])
+def otp_login():
+    # flash(_('Check your email for your OTP'))
+    form = OTPForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None:
+            flash(_('Invalid username or password'))
+            return redirect(url_for('auth.login'))
+        otp = form.OTP.data
+        next_page = url_for('main.index')
+        if global_otp != otp:
+            # print('Hello world!'+user.otp, file=sys.stderr)
+            flash(_('Invalid OTP'))
+            next_page = url_for('auth.otp_login')
+            return redirect(next_page)
+        login_user(user, remember=form.remember_me.data)
+        return redirect(next_page)
+    return render_template('auth/otp_login.html', title=_('Enter OTP'),
+                               form=form)
+
+
+@bp.route('/verification',methods=['GET', 'POST'])
+def verificationLink():
+    form = VerificationForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None:
+            flash(_('Invalid username'))
+            return redirect(url_for('auth.login'))
+        email = form.email.data
+        next_page = url_for('main.index')
+        if email != user.email:
+            flash(_('Invalid email'))
+            next_page = url_for('auth.verification')
+            return redirect(next_page)
+        login_user(user, remember=False)
+        return redirect(next_page)
+    return render_template('auth/verificationlink.html', title=_('Verfication Link'),
+                               form=form)
+
+
+@bp.route('/middle',methods=['GET', 'POST'])
+def middle():
+    form = OneTimeLinkForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None:
+            flash(_('Invalid username'))
+            return redirect(url_for('auth.middle'))
+        send_otp_email(user)
+        flash(_('One Time link has been sent'))
+        return redirect(url_for('auth.otp_login'))
+    return render_template('auth/middle.html', title=_('Middle'),
+                               form=form)
 
 
 @bp.route('/logout')
@@ -73,7 +130,7 @@ def register():
         return redirect(url_for('main.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data, email=form.email.data) ## need to be modified
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()

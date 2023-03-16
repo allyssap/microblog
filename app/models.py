@@ -88,7 +88,6 @@ followers = db.Table(
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
-
 class User(UserMixin, PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -96,11 +95,14 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     about_me = db.Column(db.String(140))
+    otp = db.Column(db.String(10))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
     sec_question = db.Column(db.String(64))
     sec_answer = db.Column(db.String(32))
+    pic_name = None
+    pic_path = None
     followed = db.relationship(
         'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
@@ -120,6 +122,13 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+##
+    def set_otp(self, otp):
+        self.otp = otp
+
+        ##  def get_otp(self):
+    ##      return self.otp
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -127,9 +136,16 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def avatar(self, size):
-        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
-            digest, size)
+        if self.pic_name is None and self.pic_path is None:
+            digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+            return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+                digest, size)
+        else:
+            return str(self.pic_path).format(size)
+        
+    def set_upload(self, name, path):
+        self.pic_name = name
+        self.pic_path = path
 
     def follow(self, user):
         if not self.is_following(user):
@@ -245,6 +261,9 @@ def load_user(id):
 class Post(SearchableMixin, db.Model):
     __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key=True)
+    product = db.Column(db.String(32))
+    company = db.Column(db.String(32))
+    category = db.Column(db.String(16))
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -252,7 +271,14 @@ class Post(SearchableMixin, db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+    
+    def set_product(self, prod, comp, cat):
+        self.product = prod
+        self.company = comp
+        self.category = cat
 
+    def set_body(self, edit):
+        self.body = edit
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -263,7 +289,6 @@ class Message(db.Model):
 
     def __repr__(self):
         return '<Message {}>'.format(self.body)
-
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)

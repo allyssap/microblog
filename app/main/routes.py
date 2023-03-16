@@ -6,11 +6,11 @@ from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
-    MessageForm, SecurityForm
+    MessageForm, SecurityForm, EditPost, DeleteAccount, UploadPic, ChangePass
 from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
-
+import os
 
 @bp.before_app_request
 def before_request():
@@ -33,6 +33,7 @@ def index():
             language = ''
         post = Post(body=form.post.data, author=current_user,
                     language=language)
+        post.set_product(prod=form.product.data, comp=form.company.data, cat=form.category.data)
         db.session.add(post)
         db.session.commit()
         flash(_('Your post is now live!'))
@@ -49,6 +50,29 @@ def index():
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
+@bp.route('/edit_post/<int:post>', methods=['GET', 'POST'])
+@login_required
+def edit_post(post):
+    post_data = db.session.query(Post).get(post)
+    form = EditPost()
+    if form.validate_on_submit():
+        post_data.body = form.edit.data
+        db.session.commit()
+        flash(_('Your post has been edited.'))
+        return redirect(url_for('main.index'))
+    else:
+        form.edit.data = post_data.body
+        return render_template('edit_post.html', title=_('Edit Post'),
+                           form=form)
+
+@bp.route('/delete_post<int:post>', methods=['GET', 'POST'])
+@login_required
+def delete_post(post):
+    post_data = db.session.query(Post).get(post)
+    db.session.delete(post_data)
+    db.session.commit()
+    flash(_('Your post has been deleted.'))
+    return redirect(url_for('main.index'))
 
 @bp.route('/explore')
 @login_required
@@ -119,6 +143,50 @@ def edit_profile():
     return render_template('edit_profile.html', title=_('Edit Profile'),
                            form=form)
 
+@bp.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePass()
+    if form.validate_on_submit():
+        if current_user.check_password(form.current_password.data):
+            current_user.set_password(form.new_password.data)
+            db.session.commit()
+            flash(_('Your changes have been saved.'))
+            return redirect(url_for('main.edit_profile'))
+        else:
+            flash(_('Current password incorrect.'))
+            return redirect(url_for('main.edit_profile'))
+    return render_template('change_password.html', title=_('Change Password'),
+                           form=form)
+
+@bp.route('/delete_account', methods=['GET', 'POST'])
+@login_required
+def delete_account():
+    form = DeleteAccount()
+    if form.validate_on_submit():
+        if form.submit.data and current_user.check_password(form.password.data):
+            db.session.delete(current_user)
+            db.session.commit()
+            flash(_('Account Deleted.'))
+            return redirect(url_for('auth.login'))
+        elif form.back.data:
+            flash(_('Delete Aborted.'))
+            return redirect(url_for('main.edit_profile'))
+    return render_template('delete_account.html', title=_('Delete Account'), form=form)
+
+@bp.route('/upload_pic', methods=['GET', 'POST'])
+@login_required
+def upload_pic():
+    form = UploadPic()
+    if form.validate_on_submit():
+        _file = form.image.data
+        filename = _file.filename
+        filepath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads', filename)
+        _file.save(filepath)
+        current_user.set_upload(filename, filepath)
+        flash(_('Profile picture uploaded'))
+        return redirect(url_for('main.edit_profile'))
+    return render_template('upload_pic.html', title=_('Upload Pic'), form=form)
 
 @bp.route('/follow/<username>', methods=['POST'])
 @login_required

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Regexp
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
@@ -16,14 +16,29 @@ class QuestionSecurityCheck(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     password = PasswordField(_l('Password'), validators=[DataRequired()])
-    remember_me = BooleanField(_l('Remember Me'))
     submit = SubmitField(_l('Sign In'))
 
+
+class OneTimeLinkForm(FlaskForm):
+    username = StringField(_l('Username'), validators=[DataRequired()])
+    submit = SubmitField(_l('Confirm & Back to OTP'))
+
+
+class VerificationForm(FlaskForm):
+    username = StringField(_l('Username'), validators=[DataRequired()])
+    email = StringField(_l('Email'), validators=[DataRequired()])
+    submit = SubmitField(_l('Verification & Sign In'))
+
+class OTPForm(FlaskForm):
+    username = StringField(_l('Username'), validators=[DataRequired()])
+    OTP = StringField(_l('OTP'), validators=[DataRequired()]) ###EqualTo(otp)
+    remember_me = BooleanField(_l('Remember Me'))
+    submit = SubmitField(_l('Log in') )
 
 class RegistrationForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
-    password = PasswordField(_l('Password'), validators=[DataRequired()])
+    password = PasswordField(_l('Password'), validators=[DataRequired(), Regexp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')])
     password2 = PasswordField(
         _l('Repeat Password'), validators=[DataRequired(),
                                            EqualTo('password')])

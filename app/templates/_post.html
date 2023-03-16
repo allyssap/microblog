@@ -13,8 +13,8 @@
                         </a>
                     </span>
                 {% endset %}
-                {{ _('%(username)s said %(when)s',
-                    username=user_link, when=moment(post.timestamp).fromNow()) }}
+                {{ _("%(username)s talked about %(company)s's %(product)s %(when)s",
+                    username=user_link, company=post.company, product=post.product, when=moment(post.timestamp).fromNow()) }}
                 <br>
                 <span id="post{{ post.id }}">{{ post.body }}</span>
                 {% if post.language and post.language != g.locale %}
@@ -25,6 +25,12 @@
                                 '#translation{{ post.id }}',
                                 '{{ post.language }}',
                                 '{{ g.locale }}');">{{ _('Translate') }}</a>
+                </span>
+                <span id="edit{{ post.id }}">
+                    <a href="{{ url_for('main.edit_post', post=post.id) }}">Edit</a>
+                </span>
+                <span id="delete{{ post.id }}">
+                    <a href="{{ url_for('main.delete_post', post=post.id) }}">Delete</a>
                 </span>
                 {% endif %}
             </td>
