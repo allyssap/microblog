@@ -95,7 +95,7 @@ def verificationLink():
         next_page = url_for('main.index')
         if email != user.email:
             flash(_('Invalid email'))
-            next_page = url_for('auth.verification')
+            next_page = url_for('auth.verificationLink')
             return redirect(next_page)
         login_user(user, remember=False)
         return redirect(next_page)
