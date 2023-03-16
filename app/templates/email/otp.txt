@@ -1,0 +1,15 @@
+Dear {{ user.username }},
+
+Here is your one time passcode:
+
+{{otp}}
+
+Here is one time Link:
+
+{{link}}
+
+If you have not requested a otp, simply ignore this message.
+
+Sincerely,
+
+The Microblog Team
