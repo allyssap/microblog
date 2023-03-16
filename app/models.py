@@ -88,11 +88,11 @@ followers = db.Table(
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
-archived = db.Table(
-    'archived',
-    db.Column('favourited_by', db.Integer, db.ForeignKey('user.id')),
-    db.Column('favourited', db.Integer, db.ForeignKey('post.id'))
-)
+#archived = db.Table(
+#    'archived',
+#    db.Column('favourited_by', db.Integer, db.ForeignKey('user.id')),
+#    db.Column('favourited', db.Integer, db.ForeignKey('post.id'))
+#)
 
 class User(UserMixin, PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -104,7 +104,8 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
-    favourited = db.relationship('Post', secondary=archived, back_populates='favourited_by')
+    #favourited = db.relationship('Post', secondary=archived, back_populates='favourited_by')
+    favourited = db.relationship('Archive', backref='owner', lazy=True)
     followed = db.relationship(
         'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
@@ -245,6 +246,14 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
+class Archive(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    record_owner = db.Column(db.Integer, db.ForeignKey('user.id'))
+    record_data = db.Column(db.String(350))
+
+    def __repr__(self):
+        return self.record_data
+    
 class Post(SearchableMixin, db.Model):
     __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key=True)
@@ -255,7 +264,7 @@ class Post(SearchableMixin, db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     language = db.Column(db.String(5))
-    favourited_by = db.relationship('User', secondary=archived, back_populates='favourited')
+    #favourited_by = db.relationship('User', secondary=archived, back_populates='favourited')
 
     def __repr__(self):
         return f'<Post (id={self.id}, product={self.product}, company={self.company}, category={self.category}, body={self.body}, timestamp={self.timestamp}, user_id={self.user_id}, language={self.language})>'
