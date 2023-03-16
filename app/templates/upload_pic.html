@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>{{ _('Change Avatar') }}</h1>
+    <div class="row">
+    	<div class="col-md-4">
+    		<p>{{ _('Use Gravatar to manage your profile image that appears on this site and other sites that support Gravatar.') }}</p>
+    		<p><a href="https://en.gravatar.com/emails/" target="_blank">{{ _('Manage Your Gravatar') }}</a></p>
+    	</div>
+    </div>
+{% endblock %}

@@ -6,11 +6,11 @@ from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
-    MessageForm, EditPost
+    MessageForm, EditPost, SecurityForm, DeleteAccount, UploadPic, ChangePass
 from app.models import User, Post, Message, Notification, Archive
 from app.translate import translate
 from app.main import bp
-
+import os
 
 @bp.before_app_request
 def before_request():
@@ -99,6 +99,18 @@ def explore():
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
+@bp.route('/security_question', methods=['GET', 'POST'])
+@login_required
+def security_question():
+    form = SecurityForm()
+    if form.validate_on_submit():
+        current_user.sec_question = form.question.data
+        current_user.sec_answer = form.answer.data
+        db.session.commit()
+        flash(_('Your security question has been set.'))
+        return redirect(url_for('main.edit_profile'))
+    return render_template('security_question.html', title=_('Set Security Question'),
+                           form=form)
 
 @bp.route('/user/<username>')
 @login_required
@@ -140,6 +152,51 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title=_('Edit Profile'),
                            form=form)
+
+@bp.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePass()
+    if form.validate_on_submit():
+        if current_user.check_password(form.current_password.data):
+            current_user.set_password(form.new_password.data)
+            db.session.commit()
+            flash(_('Your changes have been saved.'))
+            return redirect(url_for('main.edit_profile'))
+        else:
+            flash(_('Current password incorrect.'))
+            return redirect(url_for('main.edit_profile'))
+    return render_template('change_password.html', title=_('Change Password'),
+                           form=form)
+
+@bp.route('/delete_account', methods=['GET', 'POST'])
+@login_required
+def delete_account():
+    form = DeleteAccount()
+    if form.validate_on_submit():
+        if form.submit.data and current_user.check_password(form.password.data):
+            db.session.delete(current_user)
+            db.session.commit()
+            flash(_('Account Deleted.'))
+            return redirect(url_for('auth.login'))
+        elif form.back.data:
+            flash(_('Delete Aborted.'))
+            return redirect(url_for('main.edit_profile'))
+    return render_template('delete_account.html', title=_('Delete Account'), form=form)
+
+@bp.route('/upload_pic', methods=['GET', 'POST'])
+@login_required
+def upload_pic():
+    form = UploadPic()
+    if form.validate_on_submit():
+        _file = form.image.data
+        filename = _file.filename
+        filepath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads', filename)
+        _file.save(filepath)
+        current_user.set_upload(filename, filepath)
+        flash(_('Profile picture uploaded'))
+        return redirect(url_for('main.edit_profile'))
+    return render_template('upload_pic.html', title=_('Upload Pic'), form=form)
 
 @bp.route('/follow/<username>', methods=['POST'])
 @login_required
