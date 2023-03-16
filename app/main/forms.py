@@ -1,11 +1,18 @@
 from flask import request
 from flask_wtf import FlaskForm
-
 from flask_wtf.file import FileAllowed
 from wtforms import StringField, SubmitField, TextAreaField, SelectField, PasswordFi, FileField
 from wtforms.validators import ValidationError, DataRequired, Length, Regexp, EqualTo
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
+
+class SecurityForm(FlaskForm):
+    question = SelectField('Question', choices=[("What is your mother's maiden name?", "What is your mother's maiden name?"),
+                ("What was your first pet's name?", "What was your first pet's name?"),
+                ("What was your high schools mascot?", "What was your high schools mascot?"),
+                ("What city did your parents meet in?", "What city did your parents meet in?")])
+    answer = TextAreaField(_l('Answer'), validators=[DataRequired()], render_kw={"rows": 1, "cols": 32})
+    submit = SubmitField(_l('Submit'))
 
 class EditPost(FlaskForm):
     edit = TextAreaField(_l('Edit'), validators=[DataRequired()])
