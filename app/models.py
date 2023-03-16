@@ -88,6 +88,12 @@ followers = db.Table(
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
+archived = db.Table(
+    'archived',
+    db.Column('archive_owner', db.Integer, db.ForeignKey('user.id')),
+    db.Column('favourited', db.Integer, db.ForeignKey('post.id'))
+)
+
 class User(UserMixin, PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -238,16 +244,6 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
-class Favourite(db.Model){
-    id = db.Column(db.Integer, primary_key=True)
-    archive_owner = db.Column(db.Integer, db.ForeignKey('user.id')),
-    poster = db.Column(db.String(32)),
-    product = db.Column(db.String(32))
-    company = db.Column(db.String(32))
-    body = db.Column(db.String(140))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-}
-
 class Post(SearchableMixin, db.Model):
     __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key=True)
@@ -260,7 +256,7 @@ class Post(SearchableMixin, db.Model):
     language = db.Column(db.String(5))
 
     def __repr__(self):
-        return '<Post {}>'.format(self.body)
+        return f'<Post (id={self.id}, product={self.product}, company={self.company}, category={self.category}, body={self.body}, timestamp={self.timestamp}, user_id={self.user_id}, language={self.language})>'
     
     def set_product(self, prod, comp, cat):
         self.product = prod
