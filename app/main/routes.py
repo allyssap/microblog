@@ -6,8 +6,8 @@ from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
-    MessageForm, SecurityForm, EditPost, DeleteAccount, UploadPic, ChangePass
-from app.models import User, Post, Message, Notification
+    MessageForm, EditPost, SecurityForm, DeleteAccount, UploadPic, ChangePass
+from app.models import User, Post, Message, Notification, Archive
 from app.translate import translate
 from app.main import bp
 import os
@@ -64,6 +64,16 @@ def edit_post(post):
         form.edit.data = post_data.body
         return render_template('edit_post.html', title=_('Edit Post'),
                            form=form)
+    
+@bp.route('/favourite_post/<int:post>', methods=['GET', 'POST'])
+@login_required
+def favourite_post(post):
+    post_data = db.session.query(Post).get(post).__repr__()
+    favourite = Archive(record_owner=current_user.id, record_data=post_data)
+    db.session.add(favourite)
+    db.session.commit()
+    flash(_('Post has been saved.'))
+    return redirect(url_for('main.index'))
 
 @bp.route('/delete_post<int:post>', methods=['GET', 'POST'])
 @login_required

@@ -32,6 +32,9 @@
                 <span id="delete{{ post.id }}">
                     <a href="{{ url_for('main.delete_post', post=post.id) }}">Delete</a>
                 </span>
+                <span id="favourite{{ post.id }}">
+                    <a href="{{ url_for('main.favourite_post', post=post.id) }}">Favourite</a>
+                </span>
                 {% endif %}
             </td>
         </tr>

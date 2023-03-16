@@ -99,6 +99,7 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
+    favourited = db.relationship('Archive', backref='owner', lazy='dynamic')
     sec_question = db.Column(db.String(64))
     sec_answer = db.Column(db.String(32))
     pic_name = None
@@ -257,7 +258,14 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
+class Archive(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    record_owner = db.Column(db.Integer, db.ForeignKey('user.id'))
+    record_data = db.Column(db.String(350))
 
+    def __repr__(self):
+        return self.record_data
+    
 class Post(SearchableMixin, db.Model):
     __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key=True)
@@ -270,7 +278,7 @@ class Post(SearchableMixin, db.Model):
     language = db.Column(db.String(5))
 
     def __repr__(self):
-        return '<Post {}>'.format(self.body)
+        return f'<Post (id={self.id}, product={self.product}, company={self.company}, category={self.category}, body={self.body}, timestamp={self.timestamp}, user_id={self.user_id}, language={self.language})>'
     
     def set_product(self, prod, comp, cat):
         self.product = prod
