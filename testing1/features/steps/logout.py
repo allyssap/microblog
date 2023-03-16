@@ -40,6 +40,14 @@ def step_impl(context):
     add_button = context.driver.find_element(By.NAME, "submit")
     add_button.click()
     time.sleep(1)
+    #otp
+    name_field = context.driver.find_element(By.NAME, "username")
+    name_field.send_keys(date_time+"logoutT")
+    field = context.driver.find_element(By.NAME, "OTP")
+    field.send_keys("1234")
+    add_button = context.driver.find_element(By.NAME, "submit")
+    add_button.click()
+    time.sleep(1)
 
 
 @when(u'I click the “Logout” button on the top-right corner')

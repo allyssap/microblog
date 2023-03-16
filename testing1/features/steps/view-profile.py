@@ -39,6 +39,14 @@ def initialize(context):
     add_button = context.driver.find_element(By.NAME, "submit")
     add_button.click()
     time.sleep(1)
+    #otp
+    name_field = context.driver.find_element(By.NAME, "username")
+    name_field.send_keys(date_time+"pvT")
+    field = context.driver.find_element(By.NAME, "OTP")
+    field.send_keys("1234")
+    add_button = context.driver.find_element(By.NAME, "submit")
+    add_button.click()
+    time.sleep(1)
     
     # context.driver.implicitly_wait(15)
 

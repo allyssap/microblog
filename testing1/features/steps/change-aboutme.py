@@ -40,6 +40,14 @@ def initialize(context):
     add_button = context.driver.find_element(By.NAME, "submit")
     add_button.click()
     time.sleep(1)
+    #otp
+    name_field = context.driver.find_element(By.NAME, "username")
+    name_field.send_keys(date_time+"changeAm")
+    field = context.driver.find_element(By.NAME, "OTP")
+    field.send_keys("1234")
+    add_button = context.driver.find_element(By.NAME, "submit")
+    add_button.click()
+    time.sleep(1)
     #profile
     status = context.driver.find_element(By.PARTIAL_LINK_TEXT, "Profile").is_displayed()
     assert status is True

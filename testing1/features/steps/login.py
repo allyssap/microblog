@@ -47,6 +47,13 @@ def step_impl(context):
 
 @then(u'I will log in to my account')
 def step_impl(context):
+    #otp
+    name_field = context.driver.find_element(By.NAME, "username")
+    name_field.send_keys(date_time+"loginT")
+    field = context.driver.find_element(By.NAME, "OTP")
+    field.send_keys("1234")
+    add_button = context.driver.find_element(By.NAME, "submit")
+    add_button.click()
     time.sleep(1)
     dump_text = context.driver.page_source
     assert ("Hi, "+date_time+"loginT!" in dump_text) is True
