@@ -49,6 +49,10 @@ def initialize(context):
     add_button.click()
     time.sleep(1)
     #add a post
+    post_field = context.driver.find_element(By.NAME, "product")
+    post_field.send_keys("test post p1")
+    post_field = context.driver.find_element(By.NAME, "company")
+    post_field.send_keys("test post c1")
     post_field = context.driver.find_element(By.NAME, "post")
     post_field.send_keys("test post")
     add_button = context.driver.find_element(By.NAME, "submit")
