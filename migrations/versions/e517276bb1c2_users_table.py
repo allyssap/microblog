@@ -23,6 +23,8 @@ def upgrade():
     sa.Column('username', sa.String(length=64), nullable=True),
     sa.Column('email', sa.String(length=120), nullable=True),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
+    sa.Column('sec_question', sa.String(length=64), nullable=True),
+    sa.Column('sec_answer', sa.String(length=32), nullable=True),
     sa.Column('otp', sa.Integer()),
     sa.PrimaryKeyConstraint('id')
     )

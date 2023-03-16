@@ -1,10 +1,22 @@
 from flask import request
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
-from wtforms import StringField, SubmitField, PasswordField, TextAreaField, FileField
+from wtforms import StringField, SubmitField, TextAreaField, SelectField, PasswordField, FileField
 from wtforms.validators import ValidationError, DataRequired, Length, Regexp, EqualTo
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
+
+class SecurityForm(FlaskForm):
+    question = SelectField('Question', choices=[("What is your mother's maiden name?", "What is your mother's maiden name?"),
+                ("What was your first pet's name?", "What was your first pet's name?"),
+                ("What was your high schools mascot?", "What was your high schools mascot?"),
+                ("What city did your parents meet in?", "What city did your parents meet in?")])
+    answer = TextAreaField(_l('Answer'), validators=[DataRequired()], render_kw={"rows": 1, "cols": 32})
+    submit = SubmitField(_l('Submit'))
+
+class EditPost(FlaskForm):
+    edit = TextAreaField(_l('Edit'), validators=[DataRequired()])
+    submit = SubmitField(_l('Submit'))
 
 class DeleteAccount(FlaskForm):
     password = PasswordField(_l('Current Password'), validators=[DataRequired()])
@@ -42,6 +54,11 @@ class EmptyForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class PostForm(FlaskForm):
+    product = TextAreaField(_l('Product'), validators=[DataRequired()], render_kw={"rows": 1, "cols": 32})
+    company = TextAreaField(_l('Company'), validators=[DataRequired()], render_kw={"rows": 1, "cols": 32})
+    category = SelectField('Category', choices=[('Electronics', 'Electronics'), ('Furniture', 'Furniture'),
+                ('Books', 'Books'), ('Clothes','Clothes'), ('Makeup','Makeup'),
+                ('Toys','Toys'), ('Games','Games'), ('Tools', 'Tools'), ('Other', 'Other')])
     post = TextAreaField(_l('Say something'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
 
