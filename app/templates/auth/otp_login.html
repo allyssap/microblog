@@ -9,6 +9,7 @@
         </div>
     </div>
     <br>
+    <p>{{ _('Send me one time Link to my Email') }} <a href="{{ url_for('auth.middle') }}">{{ _('Click to Send!') }}</a></p>
     <p>{{ _('New User?') }} <a href="{{ url_for('auth.register') }}">{{ _('Click to Register!') }}</a></p>
     <p>{{ _('Returning User?') }} <a href="{{ url_for('auth.login') }}">{{ _('Click to Login!') }}</a></p>
 {% endblock %}
