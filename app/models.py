@@ -90,7 +90,7 @@ followers = db.Table(
 
 archived = db.Table(
     'archived',
-    db.Column('archive_owner', db.Integer, db.ForeignKey('user.id')),
+    db.Column('favourited_by', db.Integer, db.ForeignKey('user.id')),
     db.Column('favourited', db.Integer, db.ForeignKey('post.id'))
 )
 
@@ -104,6 +104,7 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
+    favourited = db.relationship('Post', secondary=archived, back_populates='favourited_by')
     followed = db.relationship(
         'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
@@ -254,6 +255,7 @@ class Post(SearchableMixin, db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     language = db.Column(db.String(5))
+    favourited_by = db.relationship('User', secondary=archived, back_populates='favourited')
 
     def __repr__(self):
         return f'<Post (id={self.id}, product={self.product}, company={self.company}, category={self.category}, body={self.body}, timestamp={self.timestamp}, user_id={self.user_id}, language={self.language})>'
