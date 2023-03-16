@@ -88,7 +88,6 @@ followers = db.Table(
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
-
 class User(UserMixin, PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -239,6 +238,15 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
+class Favourite(db.Model){
+    id = db.Column(db.Integer, primary_key=True)
+    archive_owner = db.Column(db.Integer, db.ForeignKey('user.id')),
+    poster = db.Column(db.String(32)),
+    product = db.Column(db.String(32))
+    company = db.Column(db.String(32))
+    body = db.Column(db.String(140))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+}
 
 class Post(SearchableMixin, db.Model):
     __searchable__ = ['body']
