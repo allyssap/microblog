@@ -5,7 +5,7 @@ from flask_babel import _
 from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm, \
-    ResetPasswordRequestForm, ResetPasswordForm, OTPForm
+    ResetPasswordRequestForm, ResetPasswordForm, OTPForm, VerificationForm, OneTimeLinkForm
 from app.models import User
 from app.auth.email import send_password_reset_email, send_otp_email
 
@@ -48,6 +48,42 @@ def otp_login():
         return redirect(next_page)
     return render_template('auth/otp_login.html', title=_('Enter OTP'),
                                form=form)
+
+
+@bp.route('/verification',methods=['GET', 'POST'])
+def verificationLink():
+    form = VerificationForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None:
+            flash(_('Invalid username'))
+            return redirect(url_for('auth.login'))
+        email = form.email.data
+        next_page = url_for('main.index')
+        if email != user.email:
+            flash(_('Invalid email'))
+            next_page = url_for('auth.verification')
+            return redirect(next_page)
+        login_user(user, remember=False)
+        return redirect(next_page)
+    return render_template('auth/verificationlink.html', title=_('Verfication Link'),
+                               form=form)
+
+
+@bp.route('/middle',methods=['GET', 'POST'])
+def middle():
+    form = OneTimeLinkForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None:
+            flash(_('Invalid username'))
+            return redirect(url_for('auth.middle'))
+        send_otp_email(user)
+        flash(_('One Time link has been sent'))
+        return redirect(url_for('auth.otp_login'))
+    return render_template('auth/middle.html', title=_('Middle'),
+                               form=form)
+
 
 @bp.route('/logout')
 def logout():

@@ -9,6 +9,17 @@ class LoginForm(FlaskForm):
     password = PasswordField(_l('Password'), validators=[DataRequired()])
     submit = SubmitField(_l('Sign In'))
 
+
+class OneTimeLinkForm(FlaskForm):
+    username = StringField(_l('Username'), validators=[DataRequired()])
+    submit = SubmitField(_l('Confirm & Back to OTP'))
+
+
+class VerificationForm(FlaskForm):
+    username = StringField(_l('Username'), validators=[DataRequired()])
+    email = StringField(_l('Email'), validators=[DataRequired()])
+    submit = SubmitField(_l('Verification & Sign In'))
+
 class OTPForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     OTP = StringField(_l('OTP'), validators=[DataRequired()]) ###EqualTo(otp)

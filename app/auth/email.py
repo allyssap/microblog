@@ -24,7 +24,7 @@ def send_otp_email(user):
                sender=current_app.config['ADMINS'][0],
                recipients=[user.email],
                text_body=render_template('email/otp.txt',
-                                         user=user, otp=otp),
+                                         user=user, otp=otp, link ='auth/verificationlink.html'),
                html_body=render_template('email/otp.html',
                                          user=user, otp=otp))
     return otp
