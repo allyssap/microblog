@@ -4,9 +4,7 @@
     <p>{{otp}}</p>
 
     Here is one time Link:
-    <a href="{{ url_for('auth.verificationlink', token=token, _external=True) }}">
-        click here
-    </a>.
+    <p>{{link}}</p>
 </p>
 
 <p>If you have not requested an otp, simply ignore this message.</p>
