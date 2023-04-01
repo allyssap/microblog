@@ -42,9 +42,7 @@ class MicroUser(HttpUser):
                 #print("content: ",c.get('/auth/login').content)
                 csrf_token = self.get_csrf_token(c.get('/auth/login'))
                 
-                #response = c.post('/auth/login', data={'username': 'Test', 'password': 'TestPass01$', '_csrf_token': csrf_token})
-                print("csrf: ",csrf_token)
-                self.environment.runner.quit()
+                response = c.post('/auth/login', data={'username': 'Test', 'password': 'TestPass01$', '_csrf_token': csrf_token})
                 if response.status_code == 200:
                     print(response.status_code)
                 else:
