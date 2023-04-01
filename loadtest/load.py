@@ -2,6 +2,7 @@ from locust import HttpUser, between, task, SequentialTaskSet
 import json
 from app.auth.forms import LoginForm
 from app import create_app, db
+from flask import request
 
 class MicroUser(HttpUser):
     wait_time = between(1, 2)
@@ -9,7 +10,7 @@ class MicroUser(HttpUser):
 
     def on_start(self):
         self.app = create_app()
-        self.context = self.app.test_request_context()
+        self.context = self.app.test_request_context('/auth/login')
         self.context.push()
         db.init_app(self.app)
         db.create_all()
@@ -26,7 +27,7 @@ class MicroUser(HttpUser):
             form.username.data = 'Test'
             form.username.data = 'TestPass01$'
             response = self.client.post('/auth/login', data=form.data, allow_redirects=True)
-            if response.status_code is 200:
+            if response.status_code == 200:
                 print(response.status_code)
                 response.success()
             else:
