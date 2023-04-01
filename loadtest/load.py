@@ -34,6 +34,7 @@ class MicroUser(HttpUser):
 
     @task
     def login(self):
+        '''
         with self.context:
             with self.client as c:
                 form = LoginForm()
@@ -57,10 +58,9 @@ class MicroUser(HttpUser):
                         name='Test 0',
                         catch_response=True
         ) as response:
-            if response.status_code is 200:
+            if response.status_code == 200:
                 print(response.status_code)
                 response.success()
             else:
                 response.failure('failed')
-                '''
                 
