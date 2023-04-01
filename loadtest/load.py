@@ -25,7 +25,7 @@ class MicroUser(HttpUser):
             form = LoginForm()
             form.username.data = 'Test'
             form.username.data = 'TestPass01$'
-            response = self.client.post('/auth/login', data=form.data, follow_redirects=True)
+            response = self.client.post('/auth/login', data=form.data, allow_redirects=True)
             if response.status_code is 200:
                 print(response.status_code)
                 response.success()
