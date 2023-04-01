@@ -52,3 +52,4 @@ WTForms==2.3.3
 locust
 influxdb
 pytz
+bs4

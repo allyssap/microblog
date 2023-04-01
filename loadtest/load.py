@@ -4,6 +4,7 @@ from app.auth.forms import LoginForm
 from app import create_app, db
 from flask import url_for
 from app.models import User
+from bs4 import BeautifulSoup
 
 class MicroUser(HttpUser):
     wait_time = between(1, 2)
@@ -26,14 +27,21 @@ class MicroUser(HttpUser):
         db.drop_all()
         self.context.pop()
 
+    def get_csrf_token(self, response):
+        soup = BeautifulSoup(response.content, 'html.parser')
+        csrf_token = soup.find('input', {'name': 'csrf_token'})['value']
+        return csrf_token
+
     @task
     def login(self):
         with self.context:
             with self.client as c:
-                form = LoginForm()
-                form.username.data = 'Test'
-                form.username.data = 'TestPass01$'
-                response = c.post(url_for('auth.login'), data=form.data)
+                #form = LoginForm()
+                #form.username.data = 'Test'
+                #form.username.data = 'TestPass01$'
+                csrf_token = self.get_csrf_token(c.get('/auth/login'))
+
+                response = c.post(url_for('auth.login'), data={'username': 'Test', 'password': 'TestPass01$', '_csrf_token': csrf_token})
                 if response.status_code == 200:
                     print(response.status_code)
                 else:
