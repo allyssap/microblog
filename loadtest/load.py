@@ -40,7 +40,8 @@ class MicroUser(HttpUser):
                 #form.username.data = 'Test'
                 #form.username.data = 'TestPass01$'
                 #print("content: ",c.get('/auth/login').content)
-                csrf_token = self.get_csrf_token(c.get('/auth/login'))
+                if c.get('/auth/login').status_code == 200:
+                    csrf_token = self.get_csrf_token(c.get('/auth/login'))
 
                 response = c.post(url_for('auth.login'), data={'username': 'Test', 'password': 'TestPass01$', '_csrf_token': csrf_token})
                 if response.status_code == 200:
