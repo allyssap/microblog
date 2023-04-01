@@ -28,7 +28,7 @@ class MicroUser(HttpUser):
         self.context.pop()
 
     def get_csrf_token(self, response):
-        soup = BeautifulSoup(response.content, 'html.parser')
+        soup = BeautifulSoup(response.get_data(as_text=True), 'html.parser')
         csrf_token = soup.find('input', {'name': 'csrf_token'})['value']
         return csrf_token
 
@@ -40,11 +40,7 @@ class MicroUser(HttpUser):
                 #form.username.data = 'Test'
                 #form.username.data = 'TestPass01$'
                 #print("content: ",c.get('/auth/login').content)
-                if c.get('/auth/login').status_code == 200:
-                    print(type(c.get('/auth/login')))
-                    print(c.get('/auth/login').get_data(as_text=True))
-                    self.environment.runner.quit()
-                    csrf_token = self.get_csrf_token(c.get('/auth/login'))
+                csrf_token = self.get_csrf_token(c.get('/auth/login'))
 
                 response = c.post(url_for('auth.login'), data={'username': 'Test', 'password': 'TestPass01$', '_csrf_token': csrf_token})
                 if response.status_code == 200:
