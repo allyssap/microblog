@@ -43,7 +43,7 @@ class MicroUser(HttpUser):
                 csrf_token = self.get_csrf_token(c.get('/auth/login'))
                 #json.dumps({'username': 'Test1', 'password': 'TestPass01$', '_csrf_token': str(csrf_token)})
                 headers = {'X-CSRF-TOKEN': str(csrf_token)}
-                response = c.post('/auth/login', data=form.data, headers=headers)
+                response = c.post('/index', data=form.data, headers=headers)
                 if response.status_code == 200:
                     print(csrf_token)
                     print(response.get_data(as_text=True))
