@@ -28,7 +28,7 @@ class MicroUser(HttpUser):
         self.context.pop()
 
     def get_csrf_token(self, response):
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(response.content, 'html.parser')
         csrf_token = soup.find('input', {'name': 'csrf_token'})['value']
         return csrf_token
 
