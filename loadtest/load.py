@@ -33,7 +33,7 @@ class MicroUser(HttpUser):
                 form = LoginForm()
                 form.username.data = 'Test'
                 form.username.data = 'TestPass01$'
-                response = c.post(url_for('auth.login'), data=form.data, allow_redirects=True)
+                response = c.post(url_for('auth.login'), data=form.data)
                 if response.status_code == 200:
                     print(response.status_code)
                     response.success()
