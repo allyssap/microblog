@@ -44,8 +44,9 @@ class MicroUser(HttpUser):
                 
                 response = c.post('/auth/login', data=json.dumps({'username': 'Test1', 'password': 'TestPass01$', '_csrf_token': str(csrf_token)}))
                 if response.status_code == 200:
-                    print(response.status_code)
-                    print(csrf_token)
+                    #print(response.status_code)
+                    print(response.get_data(as_text=True))
+                    self.environment.runner.quit()
                 else:
                     print('Login Unsuccessful')
                     response.failure('failed')
@@ -61,3 +62,4 @@ class MicroUser(HttpUser):
             else:
                 response.failure('failed')
                 '''
+                
