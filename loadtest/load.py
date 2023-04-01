@@ -1,6 +1,6 @@
 from locust import HttpUser, between, task, SequentialTaskSet
 import json
-from app.forms import LoginForm
+from app.auth.forms import LoginForm
 from app import create_app, db
 
 class MicroUser(HttpUser):
@@ -26,7 +26,12 @@ class MicroUser(HttpUser):
             form.username.data = 'Test'
             form.username.data = 'TestPass01$'
             response = self.client.post('/auth/login', data=form.data, follow_redirects=True)
-            assert response.status_code == 200
+            if response.status_code is 200:
+                print(response.status_code)
+                response.success()
+            else:
+                print('Login Unsuccessful')
+                response.failure('failed')
         '''
         with self.client.post('/auth/login', data=json.dumps({'username': 'Test9', 'password': 'TestPass01$'}),
                         headers={},
