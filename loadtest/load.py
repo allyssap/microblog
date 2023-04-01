@@ -9,7 +9,7 @@ class MicroUser(HttpUser):
 
     def on_start(self):
         self.app = create_app()
-        self.context = self.app.app_context()
+        self.context = self.app.test_request_context()
         self.context.push()
         db.init_app(self.app)
         db.create_all()
