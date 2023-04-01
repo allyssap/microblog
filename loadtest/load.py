@@ -10,6 +10,7 @@ class MicroUser(HttpUser):
     wait_time = between(1, 2)
     host = "http://localhost:5000"
 
+    '''
     def on_start(self):
         self.app = create_app()
         self.client = self.app.test_client()
@@ -31,7 +32,7 @@ class MicroUser(HttpUser):
         soup = BeautifulSoup(response.get_data(as_text=True), 'html.parser')
         csrf_token = soup.find('input', {'name': 'csrf_token'})['value']
         return csrf_token
-
+    '''
     @task
     def login(self):
         '''
