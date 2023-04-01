@@ -34,24 +34,23 @@ class MicroUser(HttpUser):
 
     @task
     def login(self):
-        #with self.context:
-            #with self.client as c:
-                #form = LoginForm()
-                #form.username.data = 'Test'
-                #form.username.data = 'TestPass01$'
+        with self.context:
+            with self.client as c:
+                form = LoginForm()
+                form.username.data = 'Test'
+                form.username.data = 'TestPass01$'
                 #csrf_token = self.get_csrf_token(c.get('/auth/login'))
                 #json.dumps({'username': 'Test1', 'password': 'TestPass01$', '_csrf_token': str(csrf_token)})
                 #headers = {'X-CSRF-TOKEN': str(csrf_token)}
-        response = self.client.post('/auth/login', data=json.dumps({'username': 'Test1', 'password': 'TestPass01$'}), headers={}, name='login_load_test')
-        if response.status_code == 200:
-            print('\t\t\tplease, I beg you!')
-            response.success()
+                response = c.post('/auth/login', data=form.data, headers={})
+                if response.status_code == 200:
+                    print('\t\t\tplease, I beg you!')
                     #print(csrf_token)
                     #print(response.get_data(as_text=True))
                     #self.environment.runner.quit()
-        else:
-            print('Login Unsuccessful')
-            response.failure('failed')
+                else:
+                    print('Login Unsuccessful')
+                    response.failure('failed')
         '''
         with self.client.post('/auth/login', data=json.dumps({'username': 'Test9', 'password': 'TestPass01$'}),
                         headers={},
