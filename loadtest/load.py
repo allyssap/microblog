@@ -16,6 +16,10 @@ class MicroUser(HttpUser):
         self.context.push()
         db.init_app(self.app)
         db.create_all()
+        user = User(username='Test', email='testasdfg@gmail.com') ## need to be modified
+        user.set_password('TestPass01$')
+        db.session.add(user)
+        db.session.commit()
 
     def on_stop(self):
         db.session.remove()
@@ -25,12 +29,8 @@ class MicroUser(HttpUser):
     @task
     def login(self):
         with self.client as c:
-            user = User(username='Test009', email='testasdfg@gmail.com') ## need to be modified
-            user.set_password('TestPass01$')
-            db.session.add(user)
-            db.session.commit()
             form = LoginForm()
-            form.username.data = 'Test009'
+            form.username.data = 'Test'
             form.username.data = 'TestPass01$'
             response = c.post(url_for('auth.login'), data=form.data, allow_redirects=True)
             if response.status_code == 200:
