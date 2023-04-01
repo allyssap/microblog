@@ -12,7 +12,7 @@ class MicroUser(HttpUser):
     def on_start(self):
         self.app = create_app()
         self.client = self.app.test_client()
-        self.context = self.app.app_context()
+        self.context = self.app.test_request_context()
         self.context.push()
         db.init_app(self.app)
         db.create_all()
@@ -28,17 +28,18 @@ class MicroUser(HttpUser):
 
     @task
     def login(self):
-        with self.client as c:
-            form = LoginForm()
-            form.username.data = 'Test'
-            form.username.data = 'TestPass01$'
-            response = c.post(url_for('auth.login'), data=form.data, allow_redirects=True)
-            if response.status_code == 200:
-                print(response.status_code)
-                response.success()
-            else:
-                print('Login Unsuccessful')
-                response.failure('failed')
+        with self.context:
+            with self.client as c:
+                form = LoginForm()
+                form.username.data = 'Test'
+                form.username.data = 'TestPass01$'
+                response = c.post(url_for('auth.login'), data=form.data, allow_redirects=True)
+                if response.status_code == 200:
+                    print(response.status_code)
+                    response.success()
+                else:
+                    print('Login Unsuccessful')
+                    response.failure('failed')
         '''
         with self.client.post('/auth/login', data=json.dumps({'username': 'Test9', 'password': 'TestPass01$'}),
                         headers={},
