@@ -44,10 +44,9 @@ class MicroUser(HttpUser):
                 #headers = {'X-CSRF-TOKEN': str(csrf_token)}
                 response = c.post('/auth/login', data=form.data, headers={})
                 if response.status_code == 200:
-                    print('\t\t\tplease, I beg you!')
                     #print(csrf_token)
                     #print(response.get_data(as_text=True))
-                    #self.environment.runner.quit()
+                    self.environment.runner.quit()
                 else:
                     print('Login Unsuccessful')
                     response.failure('failed')
