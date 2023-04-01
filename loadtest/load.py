@@ -39,14 +39,15 @@ class MicroUser(HttpUser):
                 #form = LoginForm()
                 #form.username.data = 'Test'
                 #form.username.data = 'TestPass01$'
-                csrf_token = self.get_csrf_token(c.get('/auth/login'))
+                print("content: ",c.get('/auth/login').content)
+                #csrf_token = self.get_csrf_token(c.get('/auth/login'))
 
-                response = c.post(url_for('auth.login'), data={'username': 'Test', 'password': 'TestPass01$', '_csrf_token': csrf_token})
-                if response.status_code == 200:
-                    print(response.status_code)
-                else:
-                    print('Login Unsuccessful')
-                    response.failure('failed')
+                #response = c.post(url_for('auth.login'), data={'username': 'Test', 'password': 'TestPass01$', '_csrf_token': csrf_token})
+                #if response.status_code == 200:
+                #    print(response.status_code)
+                #else:
+                #    print('Login Unsuccessful')
+                #    response.failure('failed')
         '''
         with self.client.post('/auth/login', data=json.dumps({'username': 'Test9', 'password': 'TestPass01$'}),
                         headers={},
