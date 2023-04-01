@@ -11,34 +11,20 @@ class MicroUser(HttpUser):
     host = "http://localhost:5000"
 
     def on_start(self):
+        self.username = 'Test'
+        self.passw = 'TestPass01$'
+        self.email = 'test@gmail.com'
         self.app = create_app()
         self.client = self.app.test_client()
         self.context = self.app.test_request_context()
         self.context.push()
-        db.init_app(self.app)
-        db.create_all()
-        self.user = 'Test'
-        self.email = 'test@gmail.com'
-        self.passw = 'TestPass01$'
-        user = User(username=self.user, email=self.email) ## need to be modified
-        user.set_password(self.passw)
-        db.session.add(user)
-        db.session.commit()
-
+        with self.client as c:
+            self.response = c.post('/api/users', data=json.dumps({'username': self.username, 'password': self.passw, 'email': self.email}))
+            
     def on_stop(self):
-        db.session.remove()
-        db.drop_all()
         self.context.pop()
-
-    def get_csrf_token(self, response):
-        soup = BeautifulSoup(response.get_data(as_text=True), 'html.parser')
-        csrf_token = soup.find('input', {'name': 'csrf_token'})['value']
-        return csrf_token
 
     @task
     def login(self):
-        with self.context:
-            temp = User.query.filter_by(username=self.user).first()
-            print(temp.__repr__())
-            self.environment.runner.quit()
+        print(self.response.status_code)
                 
