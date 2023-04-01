@@ -1,4 +1,5 @@
 from flask import render_template, redirect, url_for, flash, request, session
+from flask_wtf.csrf import csrf_exempt
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_babel import _
@@ -45,6 +46,7 @@ def answer_sec():
 global_otp = '1234'
 
 @bp.route('/login', methods=['GET', 'POST'])
+@csrf_exempt
 def login():
     form = LoginForm()
     if form.validate_on_submit():
