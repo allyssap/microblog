@@ -17,8 +17,11 @@ class MicroUser(HttpUser):
         self.context.push()
         db.init_app(self.app)
         db.create_all()
-        user = User(username='Test', email='testasdfg@gmail.com') ## need to be modified
-        user.set_password('TestPass01$')
+        self.user = 'Test'
+        self.email = 'test@gmail.com'
+        self.passw = 'TestPass01$'
+        user = User(username=self.user, email=self.email) ## need to be modified
+        user.set_password(self.passw)
         db.session.add(user)
         db.session.commit()
 
@@ -35,31 +38,7 @@ class MicroUser(HttpUser):
     @task
     def login(self):
         with self.context:
-            with self.client as c:
-                form = LoginForm()
-                form.username.data = 'Test'
-                form.username.data = 'TestPass01$'
-                #csrf_token = self.get_csrf_token(c.get('/auth/login'))
-                #json.dumps({'username': 'Test1', 'password': 'TestPass01$', '_csrf_token': str(csrf_token)})
-                #headers = {'X-CSRF-TOKEN': str(csrf_token)}
-                response = c.post('/auth/login', data=form.data, headers={})
-                if response.status_code == 200:
-                    #print(csrf_token)
-                    #print(response.get_data(as_text=True))
-                    self.environment.runner.quit()
-                else:
-                    print('Login Unsuccessful')
-                    response.failure('failed')
-        '''
-        with self.client.post('/auth/login', data=json.dumps({'username': 'Test9', 'password': 'TestPass01$'}),
-                        headers={},
-                        name='Test 0',
-                        catch_response=True
-        ) as response:
-            if response.status_code == 200:
-                print(response.status_code)
-                response.success()
-            else:
-                response.failure('failed')
-        '''
+            temp = User.query.filter_by(username=self.user).first()
+            print(temp.__repr__())
+            self.environment.runner.quit()
                 
