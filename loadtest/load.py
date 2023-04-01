@@ -10,7 +10,6 @@ class MicroUser(HttpUser):
     wait_time = between(1, 2)
     host = "http://localhost:5000"
 
-    '''
     def on_start(self):
         self.app = create_app()
         self.client = self.app.test_client()
@@ -32,24 +31,23 @@ class MicroUser(HttpUser):
         soup = BeautifulSoup(response.get_data(as_text=True), 'html.parser')
         csrf_token = soup.find('input', {'name': 'csrf_token'})['value']
         return csrf_token
-    '''
+
     @task
     def login(self):
-        '''
         with self.context:
             with self.client as c:
                 form = LoginForm()
                 form.username.data = 'Test'
                 form.username.data = 'TestPass01$'
-                #print("content: ",c.get('/auth/login').content)
-                csrf_token = self.get_csrf_token(c.get('/auth/login'))
+                #csrf_token = self.get_csrf_token(c.get('/auth/login'))
                 #json.dumps({'username': 'Test1', 'password': 'TestPass01$', '_csrf_token': str(csrf_token)})
-                headers = {'X-CSRF-TOKEN': str(csrf_token)}
-                response = c.post('/index', data=form.data, headers=headers)
+                #headers = {'X-CSRF-TOKEN': str(csrf_token)}
+                response = c.post('/auth/login', data=form.data, headers={}, name='login_load_test')
                 if response.status_code == 200:
-                    print(csrf_token)
-                    print(response.get_data(as_text=True))
-                    self.environment.runner.quit()
+                    print('\t\t\tplease, I beg you!')
+                    #print(csrf_token)
+                    #print(response.get_data(as_text=True))
+                    #self.environment.runner.quit()
                 else:
                     print('Login Unsuccessful')
                     response.failure('failed')
@@ -64,4 +62,5 @@ class MicroUser(HttpUser):
                 response.success()
             else:
                 response.failure('failed')
+        '''
                 
