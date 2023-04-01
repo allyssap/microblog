@@ -42,6 +42,7 @@ class MicroUser(HttpUser):
                 #print("content: ",c.get('/auth/login').content)
                 if c.get('/auth/login').status_code == 200:
                     print(type(c.get('/auth/login')))
+                    print(response.get_data(as_text=True))
                     self.environment.runner.quit()
                     csrf_token = self.get_csrf_token(c.get('/auth/login'))
 
