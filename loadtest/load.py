@@ -11,6 +11,14 @@ class MicroUser(HttpUser):
     def on_start(self):
         self.app = create_app()
         self.context = self.app.test_request_context('/auth/login')
+        if isinstance(self.context, dict):
+            # use the context object as a dictionary
+            print('context is dict')
+        else:
+            # handle the case where the context object is not a dictionary
+            print('context is not dict')
+            pass
+
         self.context.push()
         db.init_app(self.app)
         db.create_all()
