@@ -81,7 +81,7 @@ class MicroUser(HttpUser):
                 response = c.get(f'api/user/{user}', headers=headers)
                 response_time = int((time.time() - start_time) * 1000)
                 if response.status_code == 201:
-                    self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, response_length=len(response.text))
+                    self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, response_length=len(response.get_data().decode()))
                     print(response.status_code, ": profile page task successful")
                 else:
                     self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, exception=None)
