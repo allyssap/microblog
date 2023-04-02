@@ -18,7 +18,7 @@ class MicroUser(HttpUser):
         }
         self.cred = {
             "username" : "Test",
-            "password" : "TestPass02S$",
+            "password" : "TestPass01$",
         }
         self.app = create_app()
         self.client = self.app.test_client()
