@@ -23,11 +23,21 @@ class MicroUser(HttpUser):
         db.init_app(self.app)
         db.create_all()
         with self.client as c:
-            register_response = c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
-            if register_response.status_code != 201:
-                print("Registration failed")
+            #register_response = c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
+            #if register_response.status_code != 201:
+            #    print("Registration failed")
+            #else:
+            #    print("registration success")
+            user = User(username=self.data["username"], email=self.data["email"])
+            user.set_password(password=self.data["password"])
+            db.session.add(user)
+            db.session.commit()
+            token_response = self.client.post('/api/tokens', auth=(self.data["username"], self.data["password"]))
+            if token_response.status_code != 200:
+                print('login failed')
             else:
-                print("registration success")
+                token_dict = token_response.json()
+                self.token = token_dict['token']
             
     def on_stop(self):
         db.session.remove()
@@ -37,6 +47,7 @@ class MicroUser(HttpUser):
     @task
     def login(self):
         #print(self.response.status_code)
-        #print(self.token)
-        self.environment.runner.quit()
+        with self.client:
+            print(self.token)
+            self.environment.runner.quit()
                 
