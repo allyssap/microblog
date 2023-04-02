@@ -5,7 +5,7 @@ import psutil
 from app import create_app, db
 
 class MicroUser(HttpUser):
-    wait_time = between(1, 5)
+    wait_time = between(1, 2)
     host = "http://localhost:5000"
 
     def on_start(self):
