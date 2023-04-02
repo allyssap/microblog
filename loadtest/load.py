@@ -27,7 +27,7 @@ class MicroUser(HttpUser):
             user.set_password(self.data["password"])
             db.session.add(user)
             db.session.commit()
-            login_response = c.post('/api/login', data=json.dumps({"username":self.data["username"],"password":self.data["password"]}), headers={'Content-Type': 'application/json'})
+            login_response = c.post('/api/login', data=json.dumps({"username":self.data["username"],"password":"yolo"}), headers={'Content-Type': 'application/json'})
             if login_response.status_code != 200:
                 print('Login failed')
             else:
