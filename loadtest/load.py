@@ -51,11 +51,11 @@ class MicroUser(HttpUser):
                 user = self.data["username"]
                 response = c.get(f'api/user/{user}', headers=headers)
                 if response.status_code == 201:
-                    response.success()
+                    #response.success()
                     #events.request_success.fire(request_type="GET", name=f'api/user/{user}', response_time=response.elapsed.total_seconds(), response_length=len(response.content))
-                    #print(response.status_code, ": profile page task successful")
+                    print(response.status_code, ": profile page task successful")
                 else:
-                    response.failure(response.status_code)
+                    #response.failure(response.status_code)
                     #events.request_failure.fire(request_type="GET", name=f'api/user/{user}', response_time=response.elapsed.total_seconds(), exception=None)
-                    #print(response.status_code, ": profile page task failed")
+                    print(response.status_code, ": profile page task failed")
                 
