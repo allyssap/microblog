@@ -16,9 +16,9 @@ class MicroUser(HttpUser):
             "password" : "TestPass01$",
             "email" : "example@gmail.com"
         }
-        self.login = {
+        self.cred = {
             "username" : "Test",
-            "password" : "TestPass01$",
+            "password" : "TestPass02S$",
         }
         self.app = create_app()
         self.client = self.app.test_client()
@@ -28,7 +28,7 @@ class MicroUser(HttpUser):
         db.create_all()
         with self.client as c:
             c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
-            self.response = c.post('/api/login', data=json.dumps(self.login), headers={'Content-Type': 'application/json'})
+            c.post('/api/login', data=json.dumps(self.cred), headers={'Content-Type': 'application/json'})
 
     def on_stop(self):
         db.session.remove()
