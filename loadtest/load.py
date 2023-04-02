@@ -42,7 +42,7 @@ class MicroUser(HttpUser):
                             print('Credentials invalid')
                             token = token_response.json['token']
                             self.header = {'Authorization': 'Bearer ' + token}
-                            index_response = c.get('/api/index', headers=self.header)
+                            index_response = c.get('/api/index', data=json.dumps({"username":self.data["username"]}) ,headers=self.header)
                             if index_response.status_code == 200:
                                 print('Login successful')
                             else:
