@@ -23,10 +23,11 @@ class MicroUser(HttpUser):
         db.init_app(self.app)
         db.create_all()
         with self.client as c:
-            user = User(username=self.data["username"], email=self.data["email"]) ## need to be modified
-            user.set_password(self.data["password"])
-            db.session.add(user)
-            db.session.commit()
+            register_response = c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
+            if register_response.status_code != 201:
+                print("Registration failed")
+            else:
+                print("registration success")
             login_response = c.post('/api/login', data=json.dumps({"username":self.data["username"],"password":"yolo"}), headers={'Content-Type': 'application/json'})
             if login_response.status_code != 200:
                 print('Login failed')
