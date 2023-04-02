@@ -32,7 +32,7 @@ class MicroUser(HttpUser):
             user.set_password(password=self.data["password"])
             db.session.add(user)
             db.session.commit()
-            token_response = self.client.post('/api/tokens', auth=(self.data["username"], self.data["password"]))
+            token_response = c.post('/api/tokens', auth=(self.data["username"], self.data["password"]))
             if token_response.status_code != 200:
                 print('login failed')
             else:
