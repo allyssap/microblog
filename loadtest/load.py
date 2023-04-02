@@ -9,8 +9,7 @@ class MicroUser(HttpUser):
     host = "http://localhost:5000"
 
     def on_start(self):
-        self.environment.events.start_hatching_event += self.start_monitoring
-        self.environment.events.quitting += self.stop_monitoring
+        self.monitoring_task = self.environment.runner.greenlet.spawn(self.monitor_performance)
         self.data = {
             "username" : "Test",
             "password" : "TestPass01$",
@@ -41,11 +40,6 @@ class MicroUser(HttpUser):
         db.session.remove()
         db.drop_all()
         self.context.pop()
-
-    def start_monitoring(self):
-        self.monitoring_task = self.environment.runner.greenlet.spawn(self.monitor_performance)
-
-    def stop_monitoring(self):
         self.monitoring_task.kill()
 
     def monitor_performance(self):
