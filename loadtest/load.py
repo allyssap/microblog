@@ -28,7 +28,7 @@ class MicroUser(HttpUser):
                 print("Registration failed: ", register_response.status_code)
             else:
                 print("registration success")
-            token_response = c.post('/api/tokens', auth=(self.data["username"], self.data["password"]))
+            token_response = c.post('/api/tokens', auth=(self.data["username"], "test"))
             if token_response.status_code != 200:
                 print('login failed')
             else:
