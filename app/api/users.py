@@ -112,14 +112,72 @@ def update_user(id):
 @bp.route('/home', methods=['GET'])
 def home_page():
     # return json of URLs for registering, reseting password, and answering security question
-    pass
+    paths = {
+        'register' : url_for('auth.register'),
+        'reset password' : url_for('auth.reset_password_request'),
+        'security question' : url_for('auth.get_user')
+    }
+    response = jsonify(paths)
+    response.status_code = 200
+    return response
 
 @bp.route('/otp', methods=['POST'])
-def otp(username, otp):
+def otp():
     # verify otp matches otp for certain user
-    pass
+    req_data = request.get_json()
+    username = req_data['username']
+    otp = req_data['otp']
 
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        return jsonify({'error': 'Invalid username or password'}), 401
+
+    if otp != '1234':
+        return jsonify({'error': 'Invalid OTP'}), 401
+
+    response = jsonify({'message': 'Logged in successfully'})
+    response.status_code = 201
+    return response
+
+@bp.route('/', methods=['GET'])
 @bp.route('/index', methods=['GET'])
+@token_auth.login_required
 def index():
     # retrieve index page data json, specifically URL for profile page
-    pass    
+    req_data = request.get_json()
+    username = req_data['username']
+    user = User.query.filter_by(username=username).first_or_404()
+    if user is None:
+        return jsonify({'error': 'user account not in table'}), 401
+    page = request.args.get('page', 1, type=int)
+    posts = user.followed_posts().paginate(
+        page=page, per_page=current_app.config['POSTS_PER_PAGE'],
+        error_out=False)
+
+    posts_list = []
+    for post in posts.items:
+        posts_list.append({
+            'id': post.id,
+            'body': post.body,
+            'author': {
+                'id': post.author.id,
+                'username': post.author.username
+            },
+            'product': post.product,
+            'company': post.company,
+            'category': post.category,
+            'timestamp': post.timestamp
+        })
+
+    data = {
+        'posts': posts_list,
+        'has_next': posts.has_next,
+        'next_page': posts.next_num,
+        'has_prev': posts.has_prev,
+        'prev_page': posts.prev_num,
+        'total_pages': posts.pages,
+        'profile link' : url_for('main.user', username=user.username)
+    }
+    response = jsonify(data)
+    response.status_code = 200
+    return response
