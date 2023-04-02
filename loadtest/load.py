@@ -31,6 +31,7 @@ class MicroUser(HttpUser):
         with self.client as c:
             register_response = c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
             if register_response.status_code != 201:
+                print(register_response.status_code)
                 raise Exception('Registration failed')
             #login_response = c.post('/api/login', data=json.dumps(self.cred), headers={'Content-Type': 'application/json'})
             #if login_response.status_code != 200:
