@@ -11,15 +11,17 @@ class MicroUser(HttpUser):
     host = "http://localhost:5000"
 
     def on_start(self):
-        self.username = 'Test'
-        self.passw = 'TestPass01$'
-        self.email = 'test@gmail.com'
+        self.data = {
+            "username" : "Test",
+            "password" : "TestPass01$",
+            "email" : "example@gmail.com"
+        }
         self.app = create_app()
         self.client = self.app.test_client()
         self.context = self.app.test_request_context()
         self.context.push()
         with self.client as c:
-            self.response = c.post('/api/users', data={"username": str(self.username), "password": str(self.passw), "email": str(self.email)})
+            self.response = c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
             
     def on_stop(self):
         self.context.pop()
