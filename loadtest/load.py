@@ -45,8 +45,15 @@ class MicroUser(HttpUser):
     @task
     def login(self):
         #print(self.response.status_code)
-        with self.client:
+        with self.client as c:
             if self.loginFlag == True:
                 print(self.token)
+                headers = {'Authorization': 'Bearer ' + self.token}
+                user = self.data["username"]
+                response = c.get(f'api/user/{user}', headers=headers)
+                if response.status_code == 201:
+                    print(response.status_code, ": profile page task successful")
+                else:
+                    print(response.status_code, ": profile page task failed")
             self.environment.runner.quit()
                 
