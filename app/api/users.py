@@ -1,6 +1,6 @@
-from flask import jsonify, request, url_for, abort
+from flask import jsonify, request, url_for, abort, current_app
 from app import db
-from app.models import User
+from app.models import User, Post
 from app.api import bp
 from app.api.auth import token_auth
 from app.api.errors import bad_request
@@ -60,7 +60,7 @@ def create_user():
     response.status_code = 201
     response.headers['Location'] = url_for('api.get_user', id=user.id)
     return response
-
+'''
 @bp.route('/login', methods=['POST'])
 def sign_in():
     username = request.json.get('username')
@@ -69,9 +69,38 @@ def sign_in():
     if user is None or not user.check_password(password):
         return jsonify({'error': 'Invalid username or password'}), 401
     return jsonify({'message': 'Successfully logged in'}), 200
+    '''
 
-#@bp.route('/user/<username>', methods=['P'])
-#@token_auth.login_required
+@bp.route('/user/<username>', methods=['GET'])
+@token_auth.login_required
+def get_profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    posts = user.posts.order_by(Post.timestamp.desc()).paginate(
+        page=page, per_page=current_app.config['POSTS_PER_PAGE'],
+        error_out=False)
+    next_url = url_for('api.get_user', username=user.username,
+                       page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('api.get_user', username=user.username,
+                       page=posts.prev_num) if posts.has_prev else None
+    posts_data = []
+    for post in posts:
+        post_data = {
+            'id': post.id,
+            'body': post.body,
+            'timestamp': post.timestamp
+        }
+        posts_data.append(post_data)
+    user_data = {
+        'id': user.id,
+        'username': user.username,
+        'posts': posts_data,
+        'next_url': next_url,
+        'prev_url': prev_url
+    }
+    response = jsonify(user_data)
+    response.status_code = 201
+    return response
 
 @bp.route('/users/<int:id>', methods=['PUT'])
 @token_auth.login_required
