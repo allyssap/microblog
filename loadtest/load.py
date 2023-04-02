@@ -1,4 +1,4 @@
-from locust import HttpUser, between, task, SequentialTaskSet
+from locust import HttpUser, between, task, events
 import json
 from app.auth.forms import LoginForm
 from app import create_app, db
@@ -42,9 +42,8 @@ class MicroUser(HttpUser):
         db.drop_all()
         self.context.pop()
 
-    @task
-    def login(self):
-        #print(self.response.status_code)
+    @task(1)
+    def profile(self):
         with self.client as c:
             if self.loginFlag == True:
                 print(self.token)
@@ -52,8 +51,9 @@ class MicroUser(HttpUser):
                 user = self.data["username"]
                 response = c.get(f'api/user/{user}', headers=headers)
                 if response.status_code == 201:
-                    print(response.status_code, ": profile page task successful")
+                    events.request_success.fire(request_type="GET", name="/my-endpoint", response_time=response.elapsed.total_seconds(), response_length=len(response.content))
+                    #print(response.status_code, ": profile page task successful")
                 else:
-                    print(response.status_code, ": profile page task failed")
-            self.environment.runner.quit()
+                    events.request_failure.fire(request_type="GET", name="/my-endpoint", response_time=response.elapsed.total_seconds(), exception=None)
+                    #print(response.status_code, ": profile page task failed")
                 
