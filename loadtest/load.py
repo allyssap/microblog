@@ -28,7 +28,11 @@ class MicroUser(HttpUser):
         db.create_all()
         with self.client as c:
             c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
-            c.post('/api/login', data=json.dumps(self.cred), headers={'Content-Type': 'application/json'})
+            login_response = c.post('/api/login', data=json.dumps(self.cred), headers={'Content-Type': 'application/json'})
+            if login_response.status_code == 200:
+                self.session.cookies.update(login_response.cookies)
+            else:
+                raise Exception('Login failed')
 
     def on_stop(self):
         db.session.remove()
@@ -36,7 +40,13 @@ class MicroUser(HttpUser):
         self.context.pop()
 
     @task
-    def login(self):
-        print(self.response.status_code)
+    def profile(self):
+        with self.client as c:
+            profile_route = '/user' + self.data["username"]
+            response = c.get(profile_route, headers={'Cookie': self.session.cookies.output(header='', sep=';')})
+            if response.status_code == 200:
+                print(response.status_code, ": profile page task successful")
+            else:
+                print(response.status_code, ": profile page task failed")
         self.environment.runner.quit()
                 
