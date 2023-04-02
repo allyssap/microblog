@@ -60,7 +60,7 @@ def create_user():
     response.status_code = 201
     response.headers['Location'] = url_for('api.get_user', id=user.id)
     return response
-'''
+
 @bp.route('/login', methods=['POST'])
 def sign_in():
     username = request.json.get('username')
@@ -69,7 +69,7 @@ def sign_in():
     if user is None or not user.check_password(password):
         return jsonify({'error': 'Invalid username or password'}), 401
     return jsonify({'message': 'Successfully logged in'}), 200
-    '''
+
 
 @bp.route('/user/<username>', methods=['GET'])
 @token_auth.login_required

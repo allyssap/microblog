@@ -12,12 +12,10 @@ class MicroUser(HttpUser):
             "password" : "TestPass01$",
             "email" : "example@gmail.com"
         }
-        '''
         self.cred = {
             "username" : "Test",
             "password" : "TestPass01$",
-        }
-        '''
+        }        
         self.app = create_app()
         self.client = self.app.test_client()
         self.context = self.app.test_request_context()
@@ -29,9 +27,9 @@ class MicroUser(HttpUser):
             if register_response.status_code != 201:
                 print(register_response.status_code)
                 raise Exception('Registration failed')
-            #login_response = c.post('/api/login', data=json.dumps(self.cred), headers={'Content-Type': 'application/json'})
-            #if login_response.status_code != 200:
-            #    raise Exception('Login failed')
+            login_response = c.post('/api/login', data=json.dumps(self.cred), headers={'Content-Type': 'application/json'})
+            if login_response.status_code != 200:
+                raise Exception('Login failed')
             #login_response = self.client.post('/api/tokens', auth=(self.data["username"], self.data["password"]))
             #if login_response.status_code != 200:
             #    raise Exception('Login failed')
