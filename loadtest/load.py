@@ -26,7 +26,7 @@ class MicroUser(HttpUser):
         with self.client as c:
             register_response = c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
             if register_response.status_code != 201:
-                print("Registration failed: ", register_response)
+                print("Registration failed: ", register_response.status_code)
             else:
                 print("registration success")
             token_response = c.post('/api/tokens', auth=(self.data["username"], self.data["password"]))
@@ -51,9 +51,11 @@ class MicroUser(HttpUser):
                 user = self.data["username"]
                 response = c.get(f'api/user/{user}', headers=headers)
                 if response.status_code == 201:
-                    events.request_success.fire(request_type="GET", name=f'api/user/{user}', response_time=response.elapsed.total_seconds(), response_length=len(response.content))
+                    response.success()
+                    #events.request_success.fire(request_type="GET", name=f'api/user/{user}', response_time=response.elapsed.total_seconds(), response_length=len(response.content))
                     #print(response.status_code, ": profile page task successful")
                 else:
-                    events.request_failure.fire(request_type="GET", name=f'api/user/{user}', response_time=response.elapsed.total_seconds(), exception=None)
+                    response.failure(response.status_code)
+                    #events.request_failure.fire(request_type="GET", name=f'api/user/{user}', response_time=response.elapsed.total_seconds(), exception=None)
                     #print(response.status_code, ": profile page task failed")
                 
