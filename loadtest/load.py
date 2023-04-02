@@ -24,9 +24,9 @@ class MicroUser(HttpUser):
         db.init_app(self.app)
         db.create_all()
         with self.client as c:
-            register_response = c.post('/api/users', data=self.data, headers={'Content-Type': 'application/json'})
+            register_response = c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
             if register_response.status_code != 201:
-                print("Registration failed: ", register_response.status_code)
+                print("Registration failed: ", register_response)
             else:
                 print("registration success")
             token_response = c.post('/api/tokens', auth=(self.data["username"], self.data["password"]))
