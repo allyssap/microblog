@@ -37,12 +37,12 @@ class MicroUser(HttpUser):
                         print("OTP verification successful")
                         token_response = c.post('/api/tokens', auth=(self.data["username"], self.data["password"]), headers={'Content-Type': 'application/json'})
                         if token_response.status_code != 200:
-                            print('Credentials valid')
-                        else:
                             print('Credentials invalid')
+                        else:
+                            print('Credentials valid')
                             token = token_response.json['token']
                             self.header = {'Authorization': 'Bearer ' + token}
-                            index_response = c.get('/api/index', data=json.dumps({"username":self.data["username"]}) ,headers=self.header)
+                            index_response = c.get('/api/index', data=json.dumps({"username":self.data["username"]}) ,headers={'Content-Type': 'application/json', 'Authorization': self.header["Authorization"]})
                             if index_response.status_code == 200:
                                 print('Login successful')
                             else:
