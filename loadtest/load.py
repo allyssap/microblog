@@ -1,10 +1,6 @@
-from locust import HttpUser, between, task, SequentialTaskSet
+from locust import HttpUser, between, task
 import json
-from app.auth.forms import LoginForm
 from app import create_app, db
-from flask import url_for
-from app.models import User
-from bs4 import BeautifulSoup
 
 class MicroUser(HttpUser):
     wait_time = between(1, 2)
@@ -36,11 +32,11 @@ class MicroUser(HttpUser):
             #login_response = c.post('/api/login', data=json.dumps(self.cred), headers={'Content-Type': 'application/json'})
             #if login_response.status_code != 200:
             #    raise Exception('Login failed')
-            login_response = self.client.post('/api/tokens', auth=(self.data["username"], self.data["password"]))
-            if login_response.status_code != 200:
-                raise Exception('Login failed')
-            else:
-                self.token = login_response.json()['token']
+            #login_response = self.client.post('/api/tokens', auth=(self.data["username"], self.data["password"]))
+            #if login_response.status_code != 200:
+            #    raise Exception('Login failed')
+            #else:
+            #    self.token = login_response.json()['token']
 
     def on_stop(self):
         db.session.remove()
@@ -49,6 +45,8 @@ class MicroUser(HttpUser):
 
     @task
     def profile(self):
+        print("\nFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUUUUUUCCCCCCCCCCCKKKKKKKKKKKKKKKK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
+        '''
         with self.client as c:
             headers = {'Authorization': 'Bearer ' + self.token}
             user = self.data["username"]
@@ -57,5 +55,6 @@ class MicroUser(HttpUser):
                 print(response.status_code, ": profile page task successful")
             else:
                 print(response.status_code, ": profile page task failed")
+                '''
         self.environment.runner.quit()
                 
