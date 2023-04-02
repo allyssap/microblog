@@ -14,7 +14,7 @@ class MicroUser(HttpUser):
         self.data = {
             "username" : "Test",
             "password" : "TestPass01$",
-            "email" : "example@gmail.com"
+            "email" : "test@gmail.com"
         }
         self.loginFlag = False
         self.app = create_app()
