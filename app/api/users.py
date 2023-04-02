@@ -108,3 +108,18 @@ def update_user(id):
     user.from_dict(data, new_user=False)
     db.session.commit()
     return jsonify(user.to_dict())
+
+@bp.route('/home', methods=['GET'])
+def home_page():
+    # return json of URLs for registering, reseting password, and answering security question
+    pass
+
+@bp.route('/otp', methods=['POST'])
+def otp(username, otp):
+    # verify otp matches otp for certain user
+    pass
+
+@bp.route('/index', methods=['GET'])
+def index():
+    # retrieve index page data json, specifically URL for profile page
+    pass    
