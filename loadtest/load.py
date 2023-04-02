@@ -78,7 +78,7 @@ class MicroUser(HttpUser):
                 print(self.token)
                 headers = {'Authorization': 'Bearer ' + self.token}
                 user = self.data["username"]
-                response = c.get(f'api/user/{user}', headers=headers, catch_response=True)
+                response = c.get(f'api/user/{user}', headers=headers)
                 response_time = int((time.time() - start_time) * 1000)
                 if response.status_code == 201:
                     self.environment.events.request_success.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, response_length=len(response.content))
