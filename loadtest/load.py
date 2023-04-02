@@ -32,10 +32,10 @@ class MicroUser(HttpUser):
                     print("Registration failed: ", register_response.status_code)
                 else:
                     print("Registration success")
-                    otp_response = c.post('/api/otp', data=json.dumps({"username":self.data["username"], "otp":'1234'}))
+                    otp_response = c.post('/api/otp', data=json.dumps({"username":self.data["username"], "otp":'1234'}), headers={'Content-Type': 'application/json'})
                     if otp_response.status_code == 201:
                         print("OTP verification successful")
-                        token_response = c.post('/api/tokens', auth=(self.data["username"], self.data["password"]))
+                        token_response = c.post('/api/tokens', auth=(self.data["username"], self.data["password"]), headers={'Content-Type': 'application/json'})
                         if token_response.status_code != 200:
                             print('Credentials valid')
                         else:

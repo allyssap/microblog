@@ -124,9 +124,9 @@ def home_page():
 @bp.route('/otp', methods=['POST'])
 def otp():
     # verify otp matches otp for certain user
-    req_data = request.get_json()
-    username = req_data['username']
-    otp = req_data['otp']
+    data = request.get_json()
+    username = data['username']
+    otp = data['otp']
 
     user = User.query.filter_by(username=username).first()
     if user is None:
@@ -144,8 +144,8 @@ def otp():
 @token_auth.login_required
 def index():
     # retrieve index page data json, specifically URL for profile page
-    req_data = request.get_json()
-    username = req_data['username']
+    data = request.get_json()
+    username = data['username']
     user = User.query.filter_by(username=username).first_or_404()
     if user is None:
         return jsonify({'error': 'user account not in table'}), 401
@@ -169,7 +169,7 @@ def index():
             'timestamp': post.timestamp
         })
 
-    data = {
+    index_data = {
         'posts': posts_list,
         'has_next': posts.has_next,
         'next_page': posts.next_num,
@@ -178,6 +178,6 @@ def index():
         'total_pages': posts.pages,
         'profile link' : url_for('main.user', username=user.username)
     }
-    response = jsonify(data)
+    response = jsonify(index_data)
     response.status_code = 200
     return response
