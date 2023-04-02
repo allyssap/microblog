@@ -19,7 +19,7 @@ class MicroUser(HttpUser):
         self.context = self.app.test_request_context()
         self.context.push()
         with self.client as c:
-            self.response = c.post('/api/users', json={"username": str(self.username), "password": str(self.passw), "email": str(self.email)})
+            self.response = c.post('/api/users', data={"username": str(self.username), "password": str(self.passw), "email": str(self.email)})
             
     def on_stop(self):
         self.context.pop()
