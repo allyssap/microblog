@@ -60,7 +60,7 @@ def create_user():
     response.status_code = 201
     response.headers['Location'] = url_for('api.get_user', id=user.id)
     return response
-'''
+
 @bp.route('/login', methods=['POST'])
 def sign_in():
     username = request.json.get('username')
@@ -101,7 +101,6 @@ def get_profile(username):
     response = jsonify(user_data)
     response.status_code = 201
     return response
-    '''
 
 @bp.route('/users/<int:id>', methods=['PUT'])
 @token_auth.login_required

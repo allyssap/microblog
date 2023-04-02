@@ -23,7 +23,20 @@ class MicroUser(HttpUser):
         db.init_app(self.app)
         db.create_all()
         with self.client as c:
-            self.response = c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
+            user = User(username=self.data["username"], email=self.data["email"]) ## need to be modified
+            user.set_password(self.data["password"])
+            db.session.add(user)
+            db.session.commit()
+            login_response = c.post('/api/login', data=json.dumps({"username":self.data["username"],"password":self.data["password"]}), headers={'Content-Type': 'application/json'})
+            if login_response.status_code != 200:
+                print('Login failed')
+            else:
+                print('login success')
+            token_response = self.client.post('/api/tokens', auth=(self.data["username"], self.data["password"]))
+            if token_response.status_code != 200:
+                print('token failed')
+            else:
+                self.token = login_response.json()['token']
             
     def on_stop(self):
         db.session.remove()
@@ -32,6 +45,7 @@ class MicroUser(HttpUser):
 
     @task
     def login(self):
-        print(self.response.status_code)
+        #print(self.response.status_code)
+        print(self.token)
         self.environment.runner.quit()
                 
