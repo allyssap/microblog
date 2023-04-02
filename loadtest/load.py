@@ -36,7 +36,7 @@ class MicroUser(HttpUser):
             if token_response.status_code != 200:
                 print('login failed')
             else:
-                token_dict = token_response.json()
+                token_dict = token_response.json
                 self.token = token_dict['token']
             
     def on_stop(self):
