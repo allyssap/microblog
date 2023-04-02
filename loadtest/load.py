@@ -36,7 +36,8 @@ class MicroUser(HttpUser):
             if token_response.status_code != 200:
                 print('token failed')
             else:
-                self.token = login_response.json()['token']
+                token_dict = login_response.json()
+                self.token = token_dict['token']
             
     def on_stop(self):
         db.session.remove()
