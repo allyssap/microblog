@@ -28,7 +28,7 @@ class MicroUser(HttpUser):
         db.create_all()
         with self.client as c:
             c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
-            self.response = c.post('/auth/login', data=json.dumps(self.login), headers={'Content-Type': 'application/json'})
+            self.response = c.post('/api/login', data=json.dumps(self.login), headers={'Content-Type': 'application/json'})
 
     def on_stop(self):
         db.session.remove()

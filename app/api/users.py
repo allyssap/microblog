@@ -61,6 +61,17 @@ def create_user():
     response.headers['Location'] = url_for('api.get_user', id=user.id)
     return response
 
+@bp.route('/login', methods=['POST'])
+def sign_in():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    user = User.query.filter_by(username=username).first()
+    if user is None or not user.check_password(password):
+        return jsonify({'error': 'Invalid username or password'}), 401
+    return jsonify({'message': 'Successfully logged in'}), 200
+
+#@bp.route('/user/<username>', methods=['P'])
+#@token_auth.login_required
 
 @bp.route('/users/<int:id>', methods=['PUT'])
 @token_auth.login_required
