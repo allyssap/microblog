@@ -68,7 +68,8 @@ class MicroUser(HttpUser):
             "cpu_percent": cpu_percent,
             "memory_usage": memory_usage
         }
-        self.environment.events.report_to_master(json.dumps(data))
+        #self.environment.events.report_to_master(json.dumps(data))
+        print(json.dumps(data))
 
     @task(1)
     def profile(self):
