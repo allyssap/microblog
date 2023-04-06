@@ -3,15 +3,14 @@ import json
 import time
 import psutil
 from app import create_app, db
+from collect import consumption
 
 class MicroUser(HttpUser):
     wait_time = between(1, 2)
     host = "http://localhost:5000"
 
     def on_start(self):
-        # TODO initialize aggregate data struct and add it as an attribute of self
         self.monitoring_task = self.environment.runner.greenlet.spawn(self.monitor_performance)
-        # TODO unique account data per user
         self.data = {
             "username" : "Test",
             "password" : "TestPass01$",
@@ -53,7 +52,6 @@ class MicroUser(HttpUser):
         db.drop_all()
         self.context.pop()
         self.monitoring_task.kill()
-        # TODO output the aggregate data struct to console
 
     def monitor_performance(self):
         while True:
@@ -61,7 +59,6 @@ class MicroUser(HttpUser):
             time.sleep(5)
 
     def collect_stats(self):
-        # Collect and aggregate various metrics related to the load test
         stats = self.environment.runner.stats
         total_requests = stats.total.num_requests
         avg_response_time = stats.total.avg_response_time
@@ -70,7 +67,7 @@ class MicroUser(HttpUser):
         error_rate = stats.total.fail_ratio
         cpu_percent = psutil.cpu_percent()
         memory_usage = psutil.virtual_memory().used
-
+        consumption(cpu_percent, memory_usage)
         # Write the data to the Locust web interface
         data = {
             "total_requests": total_requests,
@@ -84,12 +81,6 @@ class MicroUser(HttpUser):
         self.environment.events.report_to_master(json.dumps(data))
         # Remove the comment from the next one to output data struct to console
         # print(json.dumps(data))
-
-        # TODO call aggregate function, send data as parameter
-
-    def aggregate(self, data):
-        # TODO Add stats into a single data struct, perform necessary calculations such as min, max, avg cpu/mem, etc.
-        pass
 
     @task(1)
     def profile(self):
