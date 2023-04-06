@@ -1,8 +1,12 @@
 import json
+import os
+
+file_name = "data.txt"
+file_path = os.path.abspath(file_name)
 
 def consumption(cpu, mem):
     print("cpu: ", cpu, " mem: ", mem)
-    with open('data.txt', 'r') as f:
+    with open(file_path, 'r') as f:
         data_str = f.read()
 
     data = json.loads(data_str)
@@ -21,5 +25,5 @@ def consumption(cpu, mem):
     data["avgMEM"] = (data["avgMEM"] * data["requests"] + mem) / (data["requests"] + 1)
     data["requests"] += 1
 
-    with open('data.txt', 'w') as f:
+    with open(file_path, 'w') as f:
         f.write(json.dumps(data))         
