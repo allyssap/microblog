@@ -1,7 +1,7 @@
 import json
 import os
 
-file_name = "data.txt"
+file_name = "loadtest_data.txt"
 file_path = os.path.abspath(file_name)
 
 def consumption(cpu, mem):
