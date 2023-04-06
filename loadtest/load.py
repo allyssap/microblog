@@ -4,6 +4,8 @@ import time
 import psutil
 from app import create_app, db
 from collect import consumption
+import uuid
+from app.models import User
 
 class MicroUser(HttpUser):
     wait_time = between(1, 2)
@@ -11,11 +13,16 @@ class MicroUser(HttpUser):
 
     def on_start(self):
         self.monitoring_task = self.environment.runner.greenlet.spawn(self.monitor_performance)
+
+        unique_username = "TestUser_" + str(uuid.uuid4())
+        self.start_memory_usage = psutil.virtual_memory().used
+
         self.data = {
-            "username" : "Test",
+            "username" : unique_username,
             "password" : "TestPass01$",
-            "email" : "test@gmail.com"
-        }
+            "email" : unique_username + "@gmail.com"
+        }        
+  
         self.header = None
         self.app = create_app()
         self.client = self.app.test_client()
@@ -49,9 +56,11 @@ class MicroUser(HttpUser):
             
     def on_stop(self):
         db.session.remove()
-        db.drop_all()
-        self.context.pop()
-        self.monitoring_task.kill()
+        user_to_delete = User.query.filter_by(username=self.data["username"]).first()
+        if user_to_delete:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+
 
     def monitor_performance(self):
         while True:
