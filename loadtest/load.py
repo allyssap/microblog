@@ -95,8 +95,9 @@ class MicroUser(HttpUser):
                 if response.status_code == 201:
                     self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, response_length=len(response.get_data().decode()))
                     print(response.status_code, ": profile page task successful")
+                    consumption(psutil.cpu_percent(), psutil.virtual_memory().used)
                 else:
                     self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, exception=None)
                     print(response.status_code, ": profile page task failed")
-                consumption(psutil.cpu_percent(), psutil.virtual_memory().used)
+                    consumption(psutil.cpu_percent(), psutil.virtual_memory().used)
                 

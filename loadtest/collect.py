@@ -11,6 +11,11 @@ def consumption(cpu, mem):
 
     data = json.loads(data_str)
 
+    if data["minCPU"] == 0:
+        data["minCPU"] = cpu
+    if data["minMEM"] == 0:
+        data["minMEM"] = mem
+
     if cpu > data["maxCPU"]:
         data["maxCPU"] = cpu
     if cpu < data["minCPU"]:
