@@ -4,7 +4,7 @@ import os
 file_name = "loadtest_data.txt"
 file_path = os.path.abspath(file_name)
 
-def consumption(cpu, mem):
+def consumption(requests, cpu, mem):
     print("cpu: ", cpu, " mem: ", mem)
     with open(file_path, 'r') as f:
         data_str = f.read()
@@ -26,9 +26,9 @@ def consumption(cpu, mem):
     if mem < data["minMEM"]:
         data["minMem"] = mem
 
-    data["avgCPU"] = (data["avgCPU"] * data["requests"] + cpu) / (data["requests"] + 1)
-    data["avgMEM"] = (data["avgMEM"] * data["requests"] + mem) / (data["requests"] + 1)
-    data["requests"] += 1
+    data["avgCPU"] = (data["avgCPU"] * requests + cpu) / (requests + 1)
+    data["avgMEM"] = (data["avgMEM"] * requests + mem) / (requests + 1)
+    #data["requests"] += 1
 
     with open(file_path, 'w') as f:
         f.write(json.dumps(data))         
