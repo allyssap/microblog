@@ -5,15 +5,15 @@ file_name = "loadtest_data.txt"
 file_path = os.path.abspath(file_name)
 
 def consumption(requests, cpu, mem):
-    print("cpu: ", cpu, " mem: ", mem)
+    print("cpu: {}%".format(cpu), " mem: {}MB".format(mem))
     with open(file_path, 'r') as f:
         data_str = f.read()
 
     data = json.loads(data_str)
 
-    if data["minCPU"] == 0:
+    if data["minCPU"] == -1.0:
         data["minCPU"] = cpu
-    if data["minMEM"] == 0:
+    if data["minMEM"] == -1.0:
         data["minMEM"] = mem
 
     if cpu > data["maxCPU"]:
