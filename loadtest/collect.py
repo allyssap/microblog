@@ -26,8 +26,8 @@ def consumption(requests, cpu, mem):
     if mem < data["minMEM"]:
         data["minMem"] = mem
 
-    data["avgCPU"] = (data["avgCPU"] * requests + cpu) / (requests + 1)
-    data["avgMEM"] = (data["avgMEM"] * requests + mem) / (requests + 1)
+    data["avgCPU"] = round((data["avgCPU"] * requests + cpu) / (requests + 1),2)
+    data["avgMEM"] = round((data["avgMEM"] * requests + mem) / (requests + 1),2)
     #data["requests"] += 1
 
     with open(file_path, 'w') as f:
