@@ -35,24 +35,26 @@ class MicroUser(HttpUser):
             if home_response.status_code == 200:
                 register_response = c.post('/api/users', data=json.dumps(self.data), headers={'Content-Type': 'application/json'})
                 if register_response.status_code != 201:
-                    print("Registration failed: ", register_response.status_code)
+                    pass
+#                    print("Registration failed: ", register_response.status_code)
                 else:
-                    print("Registration success")
+#                    print("Registration success")
                     otp_response = c.post('/api/otp', data=json.dumps({"username":self.data["username"], "otp":'1234'}), headers={'Content-Type': 'application/json'})
                     if otp_response.status_code == 201:
-                        print("OTP verification successful")
+ #                       print("OTP verification successful")
                         token_response = c.post('/api/tokens', auth=(self.data["username"], self.data["password"]), headers={'Content-Type': 'application/json'})
                         if token_response.status_code != 200:
-                            print('Credentials invalid')
+  #                          print('Credentials invalid')
+                            pass
                         else:
-                            print('Credentials valid')
+   #                         print('Credentials valid')
                             token = token_response.json['token']
                             self.header = {'Authorization': 'Bearer ' + token}
                             index_response = c.get('/api/index', data=json.dumps({"username":self.data["username"]}) ,headers={'Content-Type': 'application/json', 'Authorization': self.header["Authorization"]})
-                            if index_response.status_code == 200:
-                                print('Login successful')
-                            else:
-                                print('Login unsuccessful')         
+       #                     if index_response.status_code == 200:
+    #                            print('Login successful')
+      #                      else:
+     #                           print('Login unsuccessful')         
             
     def on_stop(self):
         db.session.remove()
@@ -96,17 +98,17 @@ class MicroUser(HttpUser):
         with self.client as c:
             if self.header is not None:
                 start_time = time.time()
-                print(self.header)
+#                print(self.header)
                 #headers = {'Authorization': 'Bearer ' + self.token}
                 user = self.data["username"]
                 response = c.get(f'api/user/{user}', headers=self.header)
                 response_time = int((time.time() - start_time) * 1000)
                 if response.status_code == 201:
                     self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, response_length=len(response.get_data().decode()))
-                    print(response.status_code, ": profile page task successful")
+ #                   print(response.status_code, ": profile page task successful")
                 else:
                     self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, exception=None)
-                    print(response.status_code, ": profile page task failed")
+  #                  print(response.status_code, ": profile page task failed")
                 
                 megabytes = psutil.virtual_memory().used / (1024 * 1024)
                 cpu_percent = psutil.cpu_percent()
