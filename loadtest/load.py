@@ -110,7 +110,7 @@ class MicroUser(HttpUser):
                     self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, exception=None)
   #                  print(response.status_code, ": profile page task failed")
                 
-                megabytes = psutil.virtual_memory().used / (1024 * 1024)
+                megabytes = round(psutil.virtual_memory().used / (1024 * 1024), 2)
                 cpu_percent = psutil.cpu_percent()
                 consumption(self.environment.runner.stats.total.num_requests - 1, cpu_percent, megabytes)
                 
