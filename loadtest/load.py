@@ -65,18 +65,18 @@ class MicroUser(HttpUser):
         min_response_time = stats.total.min_response_time
         max_response_time = stats.total.max_response_time
         error_rate = stats.total.fail_ratio
-        cpu_percent = psutil.cpu_percent()
-        memory_usage = psutil.virtual_memory().used
-        consumption(cpu_percent, memory_usage)
+        #cpu_percent = psutil.cpu_percent()
+        #memory_usage = psutil.virtual_memory().used
+        #consumption(psutil.cpu_percent(), psutil.virtual_memory().used)
         # Write the data to the Locust web interface
         data = {
             "total_requests": total_requests,
             "avg_response_time": avg_response_time,
             "min_response_time": min_response_time,
             "max_response_time": max_response_time,
-            "error_rate": error_rate,
-            "cpu_percent": cpu_percent,
-            "memory_usage": memory_usage
+            "error_rate": error_rate
+            #"cpu_percent": cpu_percent,
+            #"memory_usage": memory_usage
         }
         self.environment.events.report_to_master(json.dumps(data))
         # Remove the comment from the next one to output data struct to console
@@ -98,4 +98,5 @@ class MicroUser(HttpUser):
                 else:
                     self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, exception=None)
                     print(response.status_code, ": profile page task failed")
+                consumption(psutil.cpu_percent(), psutil.virtual_memory().used)
                 
