@@ -1,4 +1,5 @@
 from locust import HttpUser, between, task, events
+from requests.exceptions import HTTPError
 import json
 import time
 import psutil
@@ -50,7 +51,8 @@ class MicroUser(HttpUser):
    #                         print('Credentials valid')
                             token = token_response.json['token']
                             self.header = {'Authorization': 'Bearer ' + token}
-                            index_response = c.get('/api/index', data=json.dumps({"username":self.data["username"]}) ,headers={'Content-Type': 'application/json', 'Authorization': self.header["Authorization"]})
+                            index_response = c.get('/api/index', data=json.dumps({"username":self.data["username"]}) ,headers={'Content-Type': 'application/json',
+                                                                                                                                'Authorization': self.header["Authorization"]})
        #                     if index_response.status_code == 200:
     #                            print('Login successful')
       #                      else:
@@ -97,20 +99,33 @@ class MicroUser(HttpUser):
     def profile(self):
         with self.client as c:
             if self.header is not None:
-                start_time = time.time()
+                try:
+                    start_time = time.time()
 #                print(self.header)
                 #headers = {'Authorization': 'Bearer ' + self.token}
-                user = self.data["username"]
-                response = c.get(f'api/user/{user}', headers=self.header)
-                response_time = int((time.time() - start_time) * 1000)
+                    user = self.data["username"]
+                    response = c.get(f'api/user/{user}', headers=self.header)
+                    response_time = int((time.time() - start_time) * 1000)
+                    response.raise_for_status()
+                    # Do something with the successful response
+                    self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, response_length=len(response.get_data().decode()))
+                except HTTPError as e:
+                    self.environment.events.request_failure.fire(
+                        request_type='GET',
+                        name='my-task',
+                        response_time=0,
+                        exception=e
+                )
+                    '''
                 if response.status_code == 201:
                     self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, response_length=len(response.get_data().decode()))
  #                   print(response.status_code, ": profile page task successful")
                 else:
-                    self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, exception=None)
+                    self.environment.events.request.fire(request_type="GET", name=f'api/user/{user}', response_time=response_time, exception="failure")
   #                  print(response.status_code, ": profile page task failed")
                 
                 megabytes = round(psutil.virtual_memory().used / (1024 * 1024), 2)
                 cpu_percent = psutil.cpu_percent()
+                '''
                 consumption(self.environment.runner.stats.total.num_requests - 1, cpu_percent, megabytes)
                 
