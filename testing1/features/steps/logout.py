@@ -15,7 +15,7 @@ def creating_account(context):
     option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
     context.driver = webdriver.Chrome(chrome_options=option)
     context.driver.implicitly_wait(15)
-    context.driver.get("http://127.0.0.1:5000/auth/register")
+    context.driver.get("http://localhost:8000/auth/register")
     field = context.driver.find_element(By.NAME, "username")
     field.send_keys(date_time+"logoutT")
     field = context.driver.find_element(By.NAME, "email")

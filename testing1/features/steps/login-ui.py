@@ -10,7 +10,7 @@ def open_browser(context):
     option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
     context.driver = webdriver.Chrome(chrome_options=option)
     context.driver.implicitly_wait(15)
-    context.driver.get("http://127.0.0.1:5000/auth/login")
+    context.driver.get("http://localhost:8000/auth/login")
 
 @then(u'the page should have a text field to enter the existing username')
 def check_username_textbox(context):

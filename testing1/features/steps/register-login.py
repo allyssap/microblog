@@ -15,7 +15,7 @@ def open_browser(context):
     option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
     context.driver = webdriver.Chrome(chrome_options=option)
     context.driver.implicitly_wait(15)
-    context.driver.get("http://127.0.0.1:5000/auth/register")
+    context.driver.get("http://localhost:8000/auth/register")
 
 
 @when(u'I fill in a unique {username} in the username field')

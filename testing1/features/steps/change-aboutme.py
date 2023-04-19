@@ -16,7 +16,7 @@ def initialize(context):
     option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
     context.driver = webdriver.Chrome(chrome_options=option)
     context.driver.implicitly_wait(15)
-    context.driver.get("http://127.0.0.1:5000/auth/login")
+    context.driver.get("http://localhost:8000/auth/login")
     #register
     logout_button = context.driver.find_element(By.PARTIAL_LINK_TEXT, "Click to Register!")
     logout_button.click()

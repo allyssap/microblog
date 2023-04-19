@@ -3,11 +3,13 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
 
-driver = webdriver.Firefox()
+option = webdriver.ChromeOptions()
+option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
+driver = webdriver.Chrome(chrome_options=option)
 
 @given(u'I am a user who is signed in at index')
 def step_impl(context):
-    driver.get("http://localhost:5000")
+    driver.get("http://localhost:8000")
     username_field = driver.find_element(By.NAME, "username")
     password_field = driver.find_element(By.NAME,"password")
     username_field.send_keys("noah")
