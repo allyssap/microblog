@@ -21,7 +21,7 @@ def open_browser(context):
 @when(u'I fill in a unique {username} in the username field')
 def step_impl(context,username):
     field = context.driver.find_element(By.NAME, "username")
-    field.send_keys(date_time+"regisT")
+    field.send_keys("noah")
 
 
 @when(u'do the same for the {email} field')
@@ -32,13 +32,13 @@ def step_impl(context,email):
 @when(u'the {password} field')
 def step_impl(context,password):
     field = context.driver.find_element(By.NAME, "password")
-    field.send_keys("Testing1!")
+    field.send_keys("Test1234!")
 
 
 @when(u'confirm the {password}')
 def step_impl(context,password):
     field = context.driver.find_element(By.NAME, "password2")
-    field.send_keys("Testing1!")
+    field.send_keys("Test1234!")
 
 
 @when(u'click the register button')
