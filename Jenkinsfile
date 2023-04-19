@@ -26,15 +26,15 @@ pipeline{
         
         stage('Test') {
             steps {
-                echo 'Testing..'
+                //echo 'Testing..'
                 // Start the Selenium container
-                sh 'sudo docker run -d -p 4444:4444 selenium/standalone-firefox' //:4.0.0-beta-4-20210823
+                //sh 'sudo docker run -d -p 4444:4444 selenium/standalone-firefox' //:4.0.0-beta-4-20210823
                 // Wait for the container to start
-                sh 'sleep 30'
+                //sh 'sleep 30'
                 // Run the Selenium tests
                 //sh 'python selenium_tests.py $SELENIUM_URL'
                 // Stop the Selenium container
-                sh 'sudo docker stop $(sudo docker ps -q --filter ancestor=selenium/standalone-firefox)' //:4.0.0-beta-4-20210823
+                //sh 'sudo docker stop $(sudo docker ps -q --filter ancestor=selenium/standalone-firefox)' //:4.0.0-beta-4-20210823
             }
         }
         
