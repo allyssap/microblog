@@ -84,7 +84,7 @@ def check_followers(context):
     submit_button.click()
     time.sleep(1)
    
-
+#small comment
 @then(u'my account will be deleted')
 def check_followings(context):
     dump_text = context.driver.page_source
